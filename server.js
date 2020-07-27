@@ -4,8 +4,6 @@ const app = express();
 
 app.use(express.json({ extended: false }));
 
-app.use("/", (req, res) => res.send("Hi"));
-
 app.use("/ts/tushare", require("./routes/tushare"));
 
 const PORT = process.env.PORT || 5000;
