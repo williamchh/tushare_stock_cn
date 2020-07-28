@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { sma } = require("./function/getIndicators");
+const { sma, ema, macd, bands } = require("./function/getIndicators");
 
 module.exports = {
   getStockDataAll: async (req, res, next) => {
@@ -118,9 +118,14 @@ module.exports = {
       });
     });
 
-    const sma08 = sma(8, hours);
+    const smaHourly08 = sma(8, hours);
+    const emaHourly08 = ema(8, hours);
+    const macdHourly = macd(21, 34, 8, hours);
+    const smaHourly21 = sma(21, hours);
+    const { upperBand, lowerBand } = bands(21, 1.618, hours, smaHourly21);
 
-    console.log(sma08);
+    console.log(smaHourly08.length);
+    // console.log(ema08.length)
 
     next();
   },

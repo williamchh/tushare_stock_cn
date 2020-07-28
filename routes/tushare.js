@@ -11,12 +11,14 @@ const {
 router.get("/", getStockDataAll, processData, getIndicators, (req, res) => {
   const stocks = req.codes;
   stocks.map((stock) => {
+    stock.values = stock.values.slice(0, 1199);
     const candle = new Candle(stock);
-    candle.save();
+    
+    // candle.save();
   });
   // let candle = req.codes;
   // candle.sa
-  res.json(req.codes);
+  res.send("stock saved");
 });
 
 module.exports = router;
