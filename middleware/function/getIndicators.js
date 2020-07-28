@@ -64,6 +64,7 @@ var self = module.exports = {
     let pos = len;
 
     while (pos >= 0) {
+
       
       if (pos > len - slow) 
         macd[pos - 1] = 0;
@@ -73,7 +74,7 @@ var self = module.exports = {
       pos--;
     }
 
-    signals = self.ema(8, macd);
+    signals = self.ema(signal, macd);
 
 
     return [macd, signals];

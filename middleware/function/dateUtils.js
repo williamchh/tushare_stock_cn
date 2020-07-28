@@ -8,9 +8,16 @@ var self = module.exports = {
         var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7)
         return [d.getFullYear(), weekNo];
       },
+    
+      getMonthNumber: (dateStr) => {
+        const dateArr = self.dateString(dateStr);
+        let d = new Date(dateArr);
+        return [d.getFullYear(), d.getMonth()];
+      },
 
-      weeksInYear : (year) => {
-        var d = new Date(year, 11, 31);
+      weeksInYear : (dateStr) => {
+        const dateArr = self.dateString(dateStr);
+        let d = new Date(dateArr);
         var week = self.getWeekNumber(d)[1];
         return week == 1 ? 52 : week;
       },

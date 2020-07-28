@@ -1,6 +1,13 @@
 const axios = require("axios");
 const { sma, ema, macd, bands } = require("./function/getIndicators");
-
+const { reverseArray, hasInArray } = require("./function/arrayUtils")
+const { dateString, getWeekNumber, getMonthNumber, weeksInYear } = require("./function/dateUtils")
+const { getNewWeekObject, 
+        getNewMonthObject, 
+        updateMonthObject, 
+        updateWeekObject, 
+        combineHourly,
+        addHourly} = require("./function/dataProcess")
 module.exports = {
   getStockDataAll: async (req, res, next) => {
     // query from headers
@@ -86,11 +93,39 @@ module.exports = {
     const { items } = req.j.data;
     const stocks = [];
 
+    let week = null;
+    let month = null;
+    let cpWk = [0, 0];
+    let cpMn = [0, 0];
+
     if (items.length > 0) {
+
+      items.reverse();
+
       items.map((item) => {
+
+        const itemWk = getWeekNumber(item[1]);
+        const itemMn = getMonthNumber(item[1]);
+
+        if (itemWk[0] !== cpWk[0] || itemWk[1] !== cpWk[1]) {
+          cpWk = itemWk;
+          week = getNewWeekObject(item);
+        }
+        else {
+          week = updateWeekObject(item, week);
+        }
+
+        if (itemMn[0] !== cpMn[0] || itemMn[1] !== cpMn[1]) {
+          cpMn = itemMn;
+          month = getNewMonthObject(item);
+        } 
+        else {
+          month = updateMonthObject(item, month);
+        }
+
         // add hourly value set into item which only contain daily value set in 'item'
-        const c = addHourly(item);
-        const value = combineHourly(c, item);
+        const hour = addHourly(item);
+        const value = combineHourly(hour, week, month, item);
 
         const index = stocks.findIndex((x) => x.code == value.code);
         if (index === -1) {
@@ -98,8 +133,18 @@ module.exports = {
         } else {
           stocks[index].values = stocks[index].values.concat(value.values);
         }
-      });
+      }
+      
+      
+      );
+
+
     }
+
+    // TODO reverse stock values in order to get correct indicators
+    const vs = stocks[0].values;
+    vs.reverse();
+    stocks[0].values = vs;
 
     req.codes = stocks;
 
@@ -108,21 +153,71 @@ module.exports = {
 
   getIndicators: (req, res, next) => {
     const stocks = req.codes;
-    const hours = [];
+    let hours = [];
+    let days = [];
+    let weeks = [];
+    let months = [];
+    let dy = [];
+    let we = [];
+    let mt = [];
 
     stocks.map((stock) => {
-      stock.values.map((value) => {
-        const { hourly } = value;
 
-        hours.push(hourly.close); //((hourly.high + hourly.low + hourly.close * 2) / 4.0);
+      stock.values.map((value) => {
+        const { hourly, daily, weekly, monthly } = value;
+        // const weighted = (hourly.high + hourly.low + hourly.close * 2) / 4.0;
+        let has = false;
+        has = hasInArray(daily, dy);
+        if (!has) {
+          dy.push(daily.date);
+          days.push(daily.close);
+        }
+
+        has = false;
+        has = hasInArray(weekly, we);
+        if (!has) {
+          we.push(weekly.date);
+          weeks.push(weekly.close);
+        }
+
+        has = false;
+        has = hasInArray(monthly, mt);
+        if (!has) {
+          mt.push(monthly.date);
+          months.push(monthly.close);
+        }
+
+        hours.push(hourly.close); 
       });
     });
 
+
+
     const smaHourly08 = sma(8, hours);
-    const emaHourly08 = ema(8, hours);
-    const macdHourly = macd(21, 34, 8, hours);
+    const smaHourly13 = sma(13, hours);
     const smaHourly21 = sma(21, hours);
-    const { upperBand, lowerBand } = bands(21, 1.618, hours, smaHourly21);
+
+    const smaDaily08 = sma(8, days);
+    const smaDaily13 = sma(13, days);
+    const smaDaily21 = sma(21, days);
+
+    const smaWeekly08 = sma(8, weeks);
+    const smaWeekly13 = sma(13, weeks);
+    const smaWeekly21 = sma(21, weeks);
+
+    const smaMonthly08 = sma(8, months);
+    const smaMonthly13 = sma(13, months);
+    const smaMonthly21 = sma(21, months);
+
+    const macdHourly = macd(21, 34, 8, hours);
+    const macdDaily = macd(21, 34, 8, days);
+    const macdWeekly = macd(21, 34, 8, weeks);
+    const macdMonthly = macd(21, 34, 8, months);
+
+    const bandHourly = bands(21, 1.618, hours, smaHourly21);
+    const bandDaily = bands(21, 1.618, days, smaDaily21);
+    const bandWeekly = bands(21, 1.618, weeks, smaWeekly21);
+    const bandMonthly = bands(21, 1.618, months, smaMonthly21);
 
     console.log(smaHourly08.length);
     // console.log(ema08.length)
@@ -131,183 +226,6 @@ module.exports = {
   },
 };
 
-function combineHourly(hours, item) {
-  const value = {
-    code: item[0],
-    values: [],
-  };
-  hours.map((hour) => {
-    const single = {
-      hourly: hour,
-      daily: {
-        date: item[1],
-        open: item[2],
-        high: item[3],
-        low: item[4],
-        close: item[5],
-        sma08: 0,
-        sma13: 0,
-        sma21: 0,
-        ema21: 0,
-        ema34: 0,
-        macd: 0,
-        signal: 0,
-        stddv: 0,
-        upper: 0,
-        lower: 0,
-      },
-      weekly: null,
-      monthly: null,
-    };
-    value.values.push(single);
-  });
-  return value;
-}
 
-// convert daily value into hourly value accroding to it is bull or bear daily candle
-function addHourly(item) {
-  const hr = [];
-  // bull candle
-  if (item[5] > item[2]) {
-    hr.push({
-      date: item[1] + "150000",
-      open: item[3],
-      high: item[3],
-      low: item[5],
-      close: item[5],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-    hr.push({
-      date: item[1] + "140000",
-      open: item[2],
-      high: item[3],
-      low: item[2],
-      close: item[3],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-    hr.push({
-      date: item[1] + "113000",
-      open: item[4],
-      high: item[2],
-      low: item[4],
-      close: item[2],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
+ 
 
-    hr.push({
-      date: item[1] + "103000",
-      open: item[2],
-      high: item[2],
-      low: item[4],
-      close: item[4],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-  } else {
-    hr.push({
-      date: item[1] + "150000",
-      open: item[4],
-      high: item[5],
-      low: item[4],
-      close: item[5],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-    hr.push({
-      date: item[1] + "140000",
-      open: item[2],
-      high: item[2],
-      low: item[4],
-      close: item[4],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-
-    hr.push({
-      date: item[1] + "113000",
-      open: item[3],
-      high: item[3],
-      low: item[2],
-      close: item[2],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-    hr.push({
-      date: item[1] + "103000",
-      open: item[2],
-      high: item[3],
-      low: item[2],
-      close: item[3],
-      sma08: 0,
-      sma13: 0,
-      sma21: 0,
-      ema21: 0,
-      ema34: 0,
-      macd: 0,
-      signal: 0,
-      stddv: 0,
-      upper: 0,
-      lower: 0,
-    });
-  }
-  return hr;
-}
