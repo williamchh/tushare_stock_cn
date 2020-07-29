@@ -1,17 +1,15 @@
 const express = require('express')
 const router = express.Router();
 
-const Candle = require("../models/Candle")
+const { getStockData } = require("../middleware/tushareMiddleware")
+const { getStockListItems, groupUpdateStock } = require("../middleware/dailyUpdate")
 
-router.get("/", async (req, res) => {
-    try {
-        const stock = await Candle.findOne({ code: "600000.SH"});
-    
-        res.json(stock);
-        
-    } catch (error) {
-        res.send(error.response)
-    }
+const Candle = require("../models/Candle");
+const StockListItem = require("../models/StockListItem")
+
+//  getStockData,
+router.get("/", getStockListItems, groupUpdateStock, async (req, res) => {
+    res.send("ok")
 })
 
 module.exports = router;

@@ -6,6 +6,9 @@ const CandleSchema = mongoose.Schema({
     require: true,
     unique: true,
   },
+  updateDate:{
+    type: Date
+  },
   values: [
     {
       hourly: {

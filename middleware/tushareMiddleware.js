@@ -1,6 +1,6 @@
 const axios = require("axios");
-const { sma, ema, macd, bands } = require("./function/getIndicators");
-const { reverseArray, hasInArray } = require("./function/arrayUtils")
+const { sma, macd, bands } = require("./function/getIndicators");
+const { hasInArray } = require("./function/arrayUtils")
 const { dateString, getWeekNumber, getMonthNumber, weeksInYear } = require("./function/dateUtils")
 const { getNewWeekObject, 
         getNewMonthObject, 
@@ -40,6 +40,7 @@ module.exports = {
       );
       
       req.stock = {};
+      req.stock.latestDate = dateString(stocks.data.data.items[0][1]);
       req.stock.data = stocks.data;
     } catch (error) {
       console.log(error);

@@ -34,7 +34,12 @@ var self = module.exports = {
             const s = strDate.substring(12, 14);
               return y+"-"+m+"-"+d+"T"+h+":"+mn+":"+s;
         }
-    } 
+      },
+      tushareDate: (date) => {
+        const str = date.toISOString().slice(0, 10).split('-');
+        const s = str[0]+str[1]+str[2];
+        return s;
+      }
       
     }
         
