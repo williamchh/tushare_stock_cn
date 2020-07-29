@@ -107,7 +107,7 @@ var self = module.exports = {
       else {
         let sdd = 0.0;
         for (let i = 0; i < period; i++) {
-          sdd += Math.pow(prices[pos] - ma[pos], 2);
+          sdd += Math.pow(prices[pos + i] - ma[pos], 2);
         }
         stddev[pos] = Math.sqrt(sdd / period);
       }
