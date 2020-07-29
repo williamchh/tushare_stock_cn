@@ -8,6 +8,7 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: false,
+      useUnifiedTopology: true
     });
     console.log("connect with remote mongo db");
   } catch (err) {
