@@ -9,6 +9,7 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 app.use("/ts/tushare", require("./routes/tushare"));
+app.use("/ts/daily", require("./routes/tushareDaily"))
 
 app.use("/test", require("./routes/test"));
 

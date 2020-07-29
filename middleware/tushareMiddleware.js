@@ -7,6 +7,7 @@ const { getNewWeekObject,
         updateMonthObject, 
         updateWeekObject, 
         combineHourly,
+        combineCandleValuesWithIndicators,
         addHourly} = require("./function/dataProcess")
 module.exports = {
   getStockDataAll: async (req, res, next) => {
@@ -37,8 +38,9 @@ module.exports = {
         postData,
         config
       );
-
-      req.j = stocks.data;
+      
+      req.stock = {};
+      req.stock.data = stocks.data;
     } catch (error) {
       console.log(error);
       return res.send(error.response);
@@ -90,7 +92,7 @@ module.exports = {
   },
 
   processData: (req, res, next) => {
-    const { items } = req.j.data;
+    const { items } = req.stock.data.data;
     const stocks = [];
 
     let week = null;
@@ -146,13 +148,13 @@ module.exports = {
     vs.reverse();
     stocks[0].values = vs;
 
-    req.codes = stocks;
+    req.stock.values = stocks;
 
     next();
   },
 
   getIndicators: (req, res, next) => {
-    const stocks = req.codes;
+    let stocks = req.stock.values;
     let hours = [];
     let days = [];
     let weeks = [];
@@ -219,6 +221,18 @@ module.exports = {
     const bandWeekly = bands(21, 1.618, weeks, smaWeekly21);
     const bandMonthly = bands(21, 1.618, months, smaMonthly21);
 
+    let combinedDataSet = {
+      smaHourly08, smaHourly13, smaHourly21,
+      smaDaily08, smaDaily13, smaDaily21,
+      smaWeekly08, smaWeekly13, smaWeekly21,
+      smaMonthly08, smaMonthly13, smaMonthly21,
+      macdHourly, macdDaily, macdWeekly, macdMonthly,
+      bandHourly, bandDaily, bandWeekly, bandMonthly,
+      dy, we, mt
+    };
+
+    req.stock.finalStock = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
+    
     console.log(smaHourly08.length);
     // console.log(ema08.length)
 

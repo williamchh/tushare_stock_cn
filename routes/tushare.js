@@ -9,13 +9,11 @@ const {
 } = require("../middleware/tushareMiddleware");
 
 router.get("/", getStockDataAll, processData, getIndicators, (req, res) => {
-  const stocks = req.codes;
-  stocks.map((stock) => {
-    stock.values = stock.values.slice(0, 1199);
-    const candle = new Candle(stock);
-    
-    // candle.save();
-  });
+  let stocks = req.stock.finalStock;
+  stocks.values = stocks.values.slice(0, 1199);
+  const candle = new Candle(stocks);
+  
+  candle.save();
   // let candle = req.codes;
   // candle.sa
   res.send("stock saved");

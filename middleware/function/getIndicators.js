@@ -26,7 +26,7 @@ var self = module.exports = {
       }
       else {
         sum = sum + Number(prices[pos]);
-        buffer[pos] = sum / period;
+        buffer[pos] = parseFloat(sum / period).toFixed(5);
         sum = sum - prices[pos + period - 1];
   
         pos--;
@@ -47,7 +47,7 @@ var self = module.exports = {
       if (pos === len) {
         buffer[pos + 1] = prices[pos + 1];
       }
-      buffer[pos] = prices[pos] * pr + buffer[pos + 1] * (1 - pr);
+      buffer[pos] = parseFloat(prices[pos] * pr + buffer[pos + 1] * (1 - pr)).toFixed(5);
       pos--;
     }
 
@@ -69,7 +69,7 @@ var self = module.exports = {
       if (pos > len - slow) 
         macd[pos - 1] = 0;
       else
-        macd[pos] = emaFast[pos] - emaSlow[pos];
+        macd[pos] = parseFloat(emaFast[pos] - emaSlow[pos]).toFixed(5);
 
       pos--;
     }
@@ -77,7 +77,7 @@ var self = module.exports = {
     signals = self.ema(signal, macd);
 
 
-    return [macd, signals];
+    return {macd, signal: signals, ema21: emaFast, ema34: emaSlow};
   },
   bands: (period, width, prices, ma21) => {
     let stddev = [];
@@ -87,11 +87,11 @@ var self = module.exports = {
 
     stddev = self.standardDeviation(prices, ma21, period);      
     for (let i = 0; i < len; i++) {
-      upperBand[i] = ma21[i] + width * stddev[i];
-      lowerBand[i] = ma21[i] - width * stddev[i];
+      upperBand[i] = parseFloat(parseFloat(ma21[i]) * 1 + (width * parseFloat(stddev[i]))).toFixed(5);
+      lowerBand[i] = parseFloat(parseFloat(ma21[i]) - (width * parseFloat(stddev[i]))).toFixed(5);
     }
 
-    return {upperBand, lowerBand};
+    return {upperBand, lowerBand, stddev};
   },
   // Standard Deviation
   // position: int, prices: array, ma: array, period: int
@@ -109,7 +109,7 @@ var self = module.exports = {
         for (let i = 0; i < period; i++) {
           sdd += Math.pow(prices[pos + i] - ma[pos], 2);
         }
-        stddev[pos] = Math.sqrt(sdd / period);
+        stddev[pos] = parseFloat(Math.sqrt(sdd / period)).toFixed(5);
       }
       pos--;
     }
