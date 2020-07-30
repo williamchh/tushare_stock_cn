@@ -2,7 +2,8 @@
 var self = module.exports = {
   sma: (period, prices) => {
     let len = prices.length;
-    let buffer = [];
+    let sma = [];
+    let nextSum = [];
 
     let sum = 0;
     let pos = len - 1;
@@ -20,21 +21,22 @@ var self = module.exports = {
     // --- main caculation loop
     while (len >= 0) {
       if (len > pos) {
-        buffer[len - 1] = 0;
+        sma[len - 1] = 0;
 
         len--;
       }
       else {
         sum = sum + Number(prices[pos]);
-        buffer[pos] = parseFloat(sum / period).toFixed(5);
+        sma[pos] = parseFloat(sum / period).toFixed(5);
         sum = sum - prices[pos + period - 1];
-  
+        nextSum[pos] = parseFloat(sum).toFixed(5);
+
         pos--;
         len--;
       }
     }
 
-    return buffer;
+    return ({sma, nextSum});
   },
 
   ema: (period, prices) => {

@@ -27,9 +27,12 @@ var self = module.exports = {
       stock.values[cnt].hourly.stddv = parseFloat(bandHourly.stddev[cnt]);
       stock.values[cnt].hourly.upper = parseFloat(bandHourly.upperBand[cnt]);
       stock.values[cnt].hourly.lower = parseFloat(bandHourly.lowerBand[cnt]);
-      stock.values[cnt].hourly.sma08 = parseFloat(smaHourly08[cnt]);
-      stock.values[cnt].hourly.sma13 = parseFloat(smaHourly13[cnt]);
-      stock.values[cnt].hourly.sma21 = parseFloat(smaHourly21[cnt]);
+      stock.values[cnt].hourly.sma08 = parseFloat(smaHourly08.sma[cnt]);
+      stock.values[cnt].hourly.sma13 = parseFloat(smaHourly13.sma[cnt]);
+      stock.values[cnt].hourly.sma21 = parseFloat(smaHourly21.sma[cnt]);
+      stock.values[cnt].hourly.nextSum08 = parseFloat(smaHourly08.nextSum[cnt]);
+      stock.values[cnt].hourly.nextSum13 = parseFloat(smaHourly13.nextSum[cnt]);
+      stock.values[cnt].hourly.nextSum21 = parseFloat(smaHourly21.nextSum[cnt]);
 
       // daily
       if (value.daily.date === dy[cntDay]) {
@@ -42,9 +45,12 @@ var self = module.exports = {
         stock.values[cnt].daily.upper = parseFloat(bandDaily.upperBand[cntDay]);
         stock.values[cnt].daily.lower = parseFloat(bandDaily.lowerBand[cntDay]);
         
-        stock.values[cnt].daily.sma08 = parseFloat(smaDaily08[cntDay]);
-        stock.values[cnt].daily.sma13 = parseFloat(smaDaily13[cntDay]);
-        stock.values[cnt].daily.sma21 = parseFloat(smaDaily21[cntDay]);
+        stock.values[cnt].daily.sma08 = parseFloat(smaDaily08.sma[cntDay]);
+        stock.values[cnt].daily.sma13 = parseFloat(smaDaily13.sma[cntDay]);
+        stock.values[cnt].daily.sma21 = parseFloat(smaDaily21.sma[cntDay]);
+        stock.values[cnt].daily.nextSum08 = parseFloat(smaDaily08.nextSum[cnt]);
+        stock.values[cnt].daily.nextSum13 = parseFloat(smaDaily13.nextSum[cnt]);
+        stock.values[cnt].daily.nextSum21 = parseFloat(smaDaily21.nextSum[cnt]);
       } else {
         cntDay++;
         stock.values[cnt].daily.macd = parseFloat(macdDaily.macd[cntDay]);
@@ -54,9 +60,12 @@ var self = module.exports = {
         stock.values[cnt].daily.stddv = parseFloat(bandDaily.stddev[cntDay]);
         stock.values[cnt].daily.upper = parseFloat(bandDaily.upperBand[cntDay]);
         stock.values[cnt].daily.lower = parseFloat(bandDaily.lowerBand[cntDay]);
-        stock.values[cnt].daily.sma08 = parseFloat(smaDaily08[cntDay]);
-        stock.values[cnt].daily.sma13 = parseFloat(smaDaily13[cntDay]);
-        stock.values[cnt].daily.sma21 = parseFloat(smaDaily21[cntDay]);
+        stock.values[cnt].daily.sma08 = parseFloat(smaDaily08.sma[cntDay]);
+        stock.values[cnt].daily.sma13 = parseFloat(smaDaily13.sma[cntDay]);
+        stock.values[cnt].daily.sma21 = parseFloat(smaDaily21.sma[cntDay]);
+        stock.values[cnt].daily.nextSum08 = parseFloat(smaDaily08.nextSum[cnt]);
+        stock.values[cnt].daily.nextSum13 = parseFloat(smaDaily13.nextSum[cnt]);
+        stock.values[cnt].daily.nextSum21 = parseFloat(smaDaily21.nextSum[cnt]);
       }
 
       // weekly
@@ -69,9 +78,12 @@ var self = module.exports = {
         stock.values[cnt].weekly.upper = parseFloat(bandWeekly.upperBand[cntWeek]);
         stock.values[cnt].weekly.lower = parseFloat(bandWeekly.lowerBand[cntWeek]);
         
-        stock.values[cnt].weekly.sma08 = parseFloat(smaWeekly08[cntWeek]);
-        stock.values[cnt].weekly.sma13 = parseFloat(smaWeekly13[cntWeek]);
-        stock.values[cnt].weekly.sma21 = parseFloat(smaWeekly21[cntWeek]);
+        stock.values[cnt].weekly.sma08 = parseFloat(smaWeekly08.sma[cntWeek]);
+        stock.values[cnt].weekly.sma13 = parseFloat(smaWeekly13.sma[cntWeek]);
+        stock.values[cnt].weekly.sma21 = parseFloat(smaWeekly21.sma[cntWeek]);
+        stock.values[cnt].weekly.nextSum08 = parseFloat(smaWeekly08.nextSum[cntWeek]);
+        stock.values[cnt].weekly.nextSum13 = parseFloat(smaWeekly13.nextSum[cntWeek]);
+        stock.values[cnt].weekly.nextSum21 = parseFloat(smaWeekly21.nextSum[cntWeek]);
       } else {
         cntWeek++;
         stock.values[cnt].weekly.macd = parseFloat(macdWeekly.macd[cntWeek]);
@@ -81,9 +93,12 @@ var self = module.exports = {
         stock.values[cnt].weekly.stddv = parseFloat(bandWeekly.stddev[cntWeek]);
         stock.values[cnt].weekly.upper = parseFloat(bandWeekly.upperBand[cntWeek]);
         stock.values[cnt].weekly.lower = parseFloat(bandWeekly.lowerBand[cntWeek]);
-        stock.values[cnt].weekly.sma08 = parseFloat(smaWeekly08[cntWeek]);
-        stock.values[cnt].weekly.sma13 = parseFloat(smaWeekly13[cntWeek]);
-        stock.values[cnt].weekly.sma21 = parseFloat(smaWeekly21[cntWeek]);
+        stock.values[cnt].weekly.sma08 = parseFloat(smaWeekly08.sma[cntWeek]);
+        stock.values[cnt].weekly.sma13 = parseFloat(smaWeekly13.sma[cntWeek]);
+        stock.values[cnt].weekly.sma21 = parseFloat(smaWeekly21.sma[cntWeek]);
+        stock.values[cnt].weekly.nextSum08 = parseFloat(smaWeekly08.nextSum[cntWeek]);
+        stock.values[cnt].weekly.nextSum13 = parseFloat(smaWeekly13.nextSum[cntWeek]);
+        stock.values[cnt].weekly.nextSum21 = parseFloat(smaWeekly21.nextSum[cntWeek]);
       }
 
       // Month
@@ -96,9 +111,12 @@ var self = module.exports = {
         stock.values[cnt].monthly.upper = parseFloat(bandMonthly.upperBand[cntMonth]);
         stock.values[cnt].monthly.lower = parseFloat(bandMonthly.lowerBand[cntMonth]);
         
-        stock.values[cnt].monthly.sma08 = parseFloat(smaMonthly08[cntMonth]);
-        stock.values[cnt].monthly.sma13 = parseFloat(smaMonthly13[cntMonth]);
-        stock.values[cnt].monthly.sma21 = parseFloat(smaMonthly21[cntMonth]);
+        stock.values[cnt].monthly.sma08 = parseFloat(smaMonthly08.sma[cntMonth]);
+        stock.values[cnt].monthly.sma13 = parseFloat(smaMonthly13.sma[cntMonth]);
+        stock.values[cnt].monthly.sma21 = parseFloat(smaMonthly21.sma[cntMonth]);
+        stock.values[cnt].monthly.nextSum08 = parseFloat(smaMonthly08.nextSum[cntMonth]);
+        stock.values[cnt].monthly.nextSum13 = parseFloat(smaMonthly13.nextSum[cntMonth]);
+        stock.values[cnt].monthly.nextSum21 = parseFloat(smaMonthly21.nextSum[cntMonth]);
       } else {
         cntMonth++;
         stock.values[cnt].monthly.macd = parseFloat(macdMonthly.macd[cntMonth]);
@@ -108,9 +126,12 @@ var self = module.exports = {
         stock.values[cnt].monthly.stddv = parseFloat(bandMonthly.stddev[cntMonth]);
         stock.values[cnt].monthly.upper = parseFloat(bandMonthly.upperBand[cntMonth]);
         stock.values[cnt].monthly.lower = parseFloat(bandMonthly.lowerBand[cntMonth]);
-        stock.values[cnt].monthly.sma08 = parseFloat(smaMonthly08[cntMonth]);
-        stock.values[cnt].monthly.sma13 = parseFloat(smaMonthly13[cntMonth]);
-        stock.values[cnt].monthly.sma21 = parseFloat(smaMonthly21[cntMonth]);
+        stock.values[cnt].monthly.sma08 = parseFloat(smaMonthly08.sma[cntMonth]);
+        stock.values[cnt].monthly.sma13 = parseFloat(smaMonthly13.sma[cntMonth]);
+        stock.values[cnt].monthly.sma21 = parseFloat(smaMonthly21.sma[cntMonth]);
+        stock.values[cnt].monthly.nextSum08 = parseFloat(smaMonthly08.nextSum[cntMonth]);
+        stock.values[cnt].monthly.nextSum13 = parseFloat(smaMonthly13.nextSum[cntMonth]);
+        stock.values[cnt].monthly.nextSum21 = parseFloat(smaMonthly21.nextSum[cntMonth]);
       }
 
       cnt++;
@@ -247,6 +268,60 @@ var self = module.exports = {
     // bull candle
     if (item[5] > item[2]) {
       hr.push({
+        date: item[1] + "103000",
+        open: item[2],
+        high: item[2],
+        low: item[4],
+        close: item[4],
+        sma08: 0,
+        sma13: 0,
+        sma21: 0,
+        ema21: 0,
+        ema34: 0,
+        macd: 0,
+        signal: 0,
+        stddv: 0,
+        upper: 0,
+        lower: 0,
+      });
+      
+      hr.push({
+        date: item[1] + "113000",
+        open: item[4],
+        high: item[2],
+        low: item[4],
+        close: item[2],
+        sma08: 0,
+        sma13: 0,
+        sma21: 0,
+        ema21: 0,
+        ema34: 0,
+        macd: 0,
+        signal: 0,
+        stddv: 0,
+        upper: 0,
+        lower: 0,
+      });
+  
+      hr.push({
+        date: item[1] + "140000",
+        open: item[2],
+        high: item[3],
+        low: item[2],
+        close: item[3],
+        sma08: 0,
+        sma13: 0,
+        sma21: 0,
+        ema21: 0,
+        ema34: 0,
+        macd: 0,
+        signal: 0,
+        stddv: 0,
+        upper: 0,
+        lower: 0,
+      });
+      
+      hr.push({
         date: item[1] + "150000",
         open: item[3],
         high: item[3],
@@ -263,8 +338,9 @@ var self = module.exports = {
         upper: 0,
         lower: 0,
       });
+    } else {
       hr.push({
-        date: item[1] + "140000",
+        date: item[1] + "103000",
         open: item[2],
         high: item[3],
         low: item[2],
@@ -280,77 +356,7 @@ var self = module.exports = {
         upper: 0,
         lower: 0,
       });
-      hr.push({
-        date: item[1] + "113000",
-        open: item[4],
-        high: item[2],
-        low: item[4],
-        close: item[2],
-        sma08: 0,
-        sma13: 0,
-        sma21: 0,
-        ema21: 0,
-        ema34: 0,
-        macd: 0,
-        signal: 0,
-        stddv: 0,
-        upper: 0,
-        lower: 0,
-      });
-  
-      hr.push({
-        date: item[1] + "103000",
-        open: item[2],
-        high: item[2],
-        low: item[4],
-        close: item[4],
-        sma08: 0,
-        sma13: 0,
-        sma21: 0,
-        ema21: 0,
-        ema34: 0,
-        macd: 0,
-        signal: 0,
-        stddv: 0,
-        upper: 0,
-        lower: 0,
-      });
-    } else {
-      hr.push({
-        date: item[1] + "150000",
-        open: item[4],
-        high: item[5],
-        low: item[4],
-        close: item[5],
-        sma08: 0,
-        sma13: 0,
-        sma21: 0,
-        ema21: 0,
-        ema34: 0,
-        macd: 0,
-        signal: 0,
-        stddv: 0,
-        upper: 0,
-        lower: 0,
-      });
-      hr.push({
-        date: item[1] + "140000",
-        open: item[2],
-        high: item[2],
-        low: item[4],
-        close: item[4],
-        sma08: 0,
-        sma13: 0,
-        sma21: 0,
-        ema21: 0,
-        ema34: 0,
-        macd: 0,
-        signal: 0,
-        stddv: 0,
-        upper: 0,
-        lower: 0,
-      });
-  
+        
       hr.push({
         date: item[1] + "113000",
         open: item[3],
@@ -368,12 +374,31 @@ var self = module.exports = {
         upper: 0,
         lower: 0,
       });
+
       hr.push({
-        date: item[1] + "103000",
+        date: item[1] + "140000",
         open: item[2],
-        high: item[3],
-        low: item[2],
-        close: item[3],
+        high: item[2],
+        low: item[4],
+        close: item[4],
+        sma08: 0,
+        sma13: 0,
+        sma21: 0,
+        ema21: 0,
+        ema34: 0,
+        macd: 0,
+        signal: 0,
+        stddv: 0,
+        upper: 0,
+        lower: 0,
+      });
+      
+      hr.push({
+        date: item[1] + "150000",
+        open: item[4],
+        high: item[5],
+        low: item[4],
+        close: item[5],
         sma08: 0,
         sma13: 0,
         sma21: 0,

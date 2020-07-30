@@ -8,7 +8,7 @@ const { groupByNum, arrGetDatesAndCodes, getOldestDate } = require("../middlewar
 const { config, paramsWithDate} = require("../middleware/function/tushareUtils")
 module.exports = {
     getStockListItems: async (req, res, next) => {
-        const listItems = await StockListItem.find({});
+        const listItems = await StockListItem.find({}).lean();
         let updateItems = [];
         const dateNow = Date.now();
 

@@ -14,14 +14,13 @@ router.get("/", getStockDataAll, processData, getIndicators, (req, res) => {
   stocks.values = stocks.values.slice(0, 1199);
   stocks.updateDate = new Date(req.stock.latestDate);
   const candle = new Candle(stocks);
-
+  
   const item = {
     code: stocks.code,
     latestUpdate: stocks.updateDate
   };
   let stockItem = new StockListItem(item);
 
-  
   stockItem.save();
   candle.save();
   // let candle = req.codes;

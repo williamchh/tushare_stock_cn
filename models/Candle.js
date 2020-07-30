@@ -36,11 +36,23 @@ const CandleSchema = mongoose.Schema({
           type: Number,
           require: true,
         },
+        nextSum08: {
+          type: Number,
+          require: true,
+        },
         sma13: {
           type: Number,
           require: true,
         },
+        nextSum13: {
+          type: Number,
+          require: true,
+        },
         sma21: {
+          type: Number,
+          require: true,
+        },
+        nextSum21: {
           type: Number,
           require: true,
         },
@@ -98,11 +110,23 @@ const CandleSchema = mongoose.Schema({
           type: Number,
           require: true,
         },
+        nextSum08: {
+          type: Number,
+          require: true,
+        },
         sma13: {
           type: Number,
           require: true,
         },
+        nextSum13: {
+          type: Number,
+          require: true,
+        },
         sma21: {
+          type: Number,
+          require: true,
+        },
+        nextSum21: {
           type: Number,
           require: true,
         },
@@ -160,11 +184,23 @@ const CandleSchema = mongoose.Schema({
           type: Number,
           require: true,
         },
+        nextSum08: {
+          type: Number,
+          require: true,
+        },
         sma13: {
           type: Number,
           require: true,
         },
+        nextSum13: {
+          type: Number,
+          require: true,
+        },
         sma21: {
+          type: Number,
+          require: true,
+        },
+        nextSum21: {
           type: Number,
           require: true,
         },
@@ -222,11 +258,23 @@ const CandleSchema = mongoose.Schema({
           type: Number,
           require: true,
         },
+        nextSum08: {
+          type: Number,
+          require: true,
+        },
         sma13: {
           type: Number,
           require: true,
         },
+        nextSum13: {
+          type: Number,
+          require: true,
+        },
         sma21: {
+          type: Number,
+          require: true,
+        },
+        nextSum21: {
           type: Number,
           require: true,
         },

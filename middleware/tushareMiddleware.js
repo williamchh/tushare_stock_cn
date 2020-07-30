@@ -105,7 +105,7 @@ module.exports = {
 
       items.reverse();
 
-      items.map((item) => {
+      items.forEach((item) => {
 
         const itemWk = getWeekNumber(item[1]);
         const itemMn = getMonthNumber(item[1]);
@@ -136,10 +136,7 @@ module.exports = {
         } else {
           stocks[index].values = stocks[index].values.concat(value.values);
         }
-      }
-      
-      
-      );
+      });
 
 
     }
@@ -217,10 +214,10 @@ module.exports = {
     const macdWeekly = macd(21, 34, 8, weeks);
     const macdMonthly = macd(21, 34, 8, months);
 
-    const bandHourly = bands(21, 1.618, hours, smaHourly21);
-    const bandDaily = bands(21, 1.618, days, smaDaily21);
-    const bandWeekly = bands(21, 1.618, weeks, smaWeekly21);
-    const bandMonthly = bands(21, 1.618, months, smaMonthly21);
+    const bandHourly = bands(21, 1.618, hours, smaHourly21.sma);
+    const bandDaily = bands(21, 1.618, days, smaDaily21.sma);
+    const bandWeekly = bands(21, 1.618, weeks, smaWeekly21.sma);
+    const bandMonthly = bands(21, 1.618, months, smaMonthly21.sma);
 
     let combinedDataSet = {
       smaHourly08, smaHourly13, smaHourly21,
@@ -234,7 +231,7 @@ module.exports = {
 
     req.stock.finalStock = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
     
-    console.log(smaHourly08.length);
+    console.log(smaHourly08.sma.length);
     // console.log(ema08.length)
 
     next();
