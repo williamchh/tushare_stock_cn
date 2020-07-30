@@ -16,10 +16,32 @@ module.exports = {
         return has;
     },
 
+    ///
+    /// mostly used in the daily update activities
+    ///
     groupByNum: (arr, n) => {
         var group = [];
         for (var i = 0, end = arr.length / n; i < end; ++i)
           group.push(arr.slice(i * n, (i + 1) * n));
         return group;
-      }
+    },
+
+    
+    getOldestDate: (arr) => {
+        let oldestDate = arr[0]
+        arr.forEach(d => {
+            if(d < oldestDate) oldestDate = d;
+        })
+        return oldestDate;
+    },
+
+    arrGetDatesAndCodes: (arr) => {
+        let date = []
+        let ts_code = []
+        arr.forEach(a => {
+            date.push(a.start_date);
+            ts_code.push(a.ts_code.trim())
+        })
+        return {date, ts_code};
+    }
 }

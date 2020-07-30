@@ -1,9 +1,10 @@
-// const axios = require("axios")
+const axios = require("axios")
 const StockListItem = require("../models/StockListItem")
+const Candle = require("../models/Candle");
 
 const { tushareDate } = require("./function/dateUtils")
-const { groupByNum } = require("../middleware/function/arrayUtils")
-
+const { groupByNum, arrGetDatesAndCodes, getOldestDate } = require("../middleware/function/arrayUtils")
+const { config, paramsWithDate} = require("../middleware/function/tushareUtils")
 module.exports = {
     getStockListItems: async (req, res, next) => {
         const listItems = await StockListItem.find({});
@@ -30,32 +31,38 @@ module.exports = {
     },
     groupUpdateStock: async (req, res, next) => {
         const data = req.updateItems.items;
-        var n = 2;
+        var n = 5;
         var updateArr = groupByNum(data, n);
 
-        updateArr.map(arr => {
-            // TODO get smallest date
-
-            // TODO get all ts-code => put into arr
-
-            // TODO call tushare
+        updateArr.forEach(async arr => {
+            let stock_db = [];
+            let stock_ts = [];
+            // get smallest date
+            // get all ts-code => put into arr
+            const { date, ts_code } = arrGetDatesAndCodes(arr)
+            const oldestDate = getOldestDate(date);
+            console.log(oldestDate);
 
             // TODO call db
+            // TODO call tushare
+            try {
+                stock_db = await Candle.find({"code": {$in:ts_code}})
+                stock_ts = await axios.post(
+                    "https://api.waditu.com",
+                    paramsWithDate(ts_code, oldestDate, tushareDate(new Date)),
+                    config()
+                  );
+                console.log(stock_db.length)
+                console.log(stock_ts.length)
+            } catch (error) {
+                res.send(error.responsse)
+            }
         })
 
-        try {
-            const codes = req.header("ts-code")
-                            .split(",")
-                            .map(Function.prototype.call, String.prototype.trim);
-            
-            var stock = await Candle.find({"code":{$in:codes}})
-            // var stock = await Candle.find({})
-        
-            res.json(stock);
-            
-        } catch (error) {
-            res.send(error.response)
-        }
+        // const codes = req.header("ts-code")
+        //                 .split(",")
+        //                 .map(Function.prototype.call, String.prototype.trim);
+       
 
         next();
     }
