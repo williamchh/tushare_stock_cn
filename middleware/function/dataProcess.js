@@ -157,7 +157,10 @@ var self = module.exports = {
             lower: 0,
           }
     },
-    updateWeekObject: (item, week) => {
+    updateWeekObject: (item, week, weekIndicators = null) => {
+        if (weekIndicators !== null) {
+          week = weekIndicators;
+        }
         let high = 0;
         let low = 0;
         week.high > item[3] ? high = week.high : high = item[3];
@@ -168,19 +171,22 @@ var self = module.exports = {
             high: high,
             low: low,
             close: item[5],
-            sma08: 0,
-            sma13: 0,
-            sma21: 0,
-            ema21: 0,
-            ema34: 0,
-            macd: 0,
-            signal: 0,
-            stddv: 0,
-            upper: 0,
-            lower: 0,
+            sma08: week.sma08,
+            sma13: week.sma13,
+            sma21: week.sma21,
+            ema21: week.ema21,
+            ema34: week.ema34,
+            macd: week.macd,
+            signal: week.signal,
+            stddv: week.stddv,
+            upper: week.upper,
+            lower: week.lower,
           };
     },
-    updateMonthObject: (item, month) => {
+    updateMonthObject: (item, month, monthIndicators = null) => {
+        if (monthIndicators !== null) {
+          month = monthIndicators;
+        }
         let high = 0;
         let low = 0;
         month.high > item[3] ? high = month.high : high = item[3];
@@ -191,16 +197,16 @@ var self = module.exports = {
             high: high,
             low: low,
             close: item[5],
-            sma08: 0,
-            sma13: 0,
-            sma21: 0,
-            ema21: 0,
-            ema34: 0,
-            macd: 0,
-            signal: 0,
-            stddv: 0,
-            upper: 0,
-            lower: 0,
+            sma08: month.sma08,
+            sma13: month.sma13,
+            sma21: month.sma21,
+            ema21: month.ema21,
+            ema34: month.ema34,
+            macd: month.macd,
+            signal: month.signal,
+            stddv: month.stddv,
+            upper: month.upper,
+            lower: month.lower,
           };
     },
     combineHourly: (hours, week, month, item) => {

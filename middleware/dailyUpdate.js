@@ -2,6 +2,7 @@ const axios = require("axios")
 const StockListItem = require("../models/StockListItem")
 const Candle = require("../models/Candle");
 
+const { updateArrStocks } = require("./function/dailyUpdateFunc")
 const { tushareDate } = require("./function/dateUtils")
 const { groupByNum, arrGetDatesAndCodes, getOldestDate } = require("../middleware/function/arrayUtils")
 const { config, paramsWithDate} = require("../middleware/function/tushareUtils")
@@ -37,25 +38,27 @@ module.exports = {
         updateArr.forEach(async arr => {
             let stock_db = [];
             let stock_ts = [];
+            
             // get smallest date
             // get all ts-code => put into arr
             const { date, ts_code } = arrGetDatesAndCodes(arr)
             const oldestDate = getOldestDate(date);
-            console.log(oldestDate);
 
+            
             // TODO call db
             // TODO call tushare
             try {
-                stock_db = await Candle.find({"code": {$in:ts_code}})
-                stock_ts = await axios.post(
+                stock_db = await Candle.find({"code": {$in:ts_code}}).lean()
+                const res = await axios.post(
                     "https://api.waditu.com",
                     paramsWithDate(ts_code, oldestDate, tushareDate(new Date)),
                     config()
-                  );
-                console.log(stock_db.length)
-                console.log(stock_ts.length)
+                );
+                stock_ts = res.data.data.items;
+
+                updateArrStocks(stock_ts, stock_db);
             } catch (error) {
-                res.send(error.responsse)
+                res.send(error.message)
             }
         })
 

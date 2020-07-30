@@ -1,0 +1,140 @@
+const StockListItem = require("../../models/StockListItem")
+const Candle = require("../../models/Candle");
+const { dateString, getWeekNumber, getMonthNumber, weeksInYear } = require("./dateUtils")
+const { getNewWeekObject, 
+        getNewMonthObject, 
+        updateMonthObject, 
+        updateWeekObject, 
+        combineHourly,
+        combineCandleValuesWithIndicators,
+        addHourly} = require("./dataProcess")
+
+var self = module.exports = {
+    updateArrStocks: (stock_ts, stock_db) => {
+        const ts = self.groupByCode(stock_ts);
+        
+        stock_db.forEach(stock => {
+            // find the latest update data
+            const latestDate = stock.values[0].daily.date;
+
+            
+            // todo iterate ts array
+            ts.forEach(tushare => {
+                // find the same stock code
+                // update them
+                if (tushare.code === stock.code) {
+                    self.updateSingleStockWithDailyActivity(stock, tushare, latestDate);
+                }
+            })
+        });
+    },
+    // groupMongoDoc: (stock_db) => {
+    //     let db = [];
+    //     stock_db.forEach(stock => 
+    //         db.push(new Candle(stock))
+    //     );
+    //     return db;
+    // },
+    groupByCode: (stock_ts) => {
+        let ts = [];
+        stock_ts.forEach(stock => {
+            const index = self.isStockInArr(ts, stock)
+            if (index === -1) {
+                ts.push({
+                    code: stock[0],
+                    values:[stock]
+                    // values: [{
+                    //     date: stock[1],
+                    //     open: stock[2],
+                    //     high: stock[3],
+                    //     low: stock[4],
+                    //     close: stock[5]
+                    // }]
+                });
+            }
+            else {
+                ts[index].values.push(
+                    stock
+                //     {
+                //     date: stock[1],
+                //     open: stock[2],
+                //     high: stock[3],
+                //     low: stock[4],
+                //     close: stock[5]
+                // }
+                )
+            }
+        });
+        return ts;
+    },
+
+    isStockInArr : (ts, stock) => {
+        const len = ts.length;
+        if (len === 0)  return -1;
+        
+        let is = -1;
+        let cnt = 0;
+        while (cnt < len) {
+            if (ts[cnt].code === stock[0])  return cnt;
+            cnt++;
+        }
+        return is;
+    },
+    updateSingleStockWithDailyActivity: (stock, tushare, latestDate) => {
+
+        const stockStartIndex = findStartIndex(stock, latestDate);
+        
+        let week = stock.values[stockStartIndex].weekly;
+        let month = stock.values[stockStartIndex].monthly;
+        let cpWk = getWeekNumber(stock.values[stockStartIndex].daily.date);
+        let cpMn = getMonthNumber(stock.values[stockStartIndex].daily.date);
+        // slice tushare set
+        const ts = sliceTushareSet(tushare, latestDate);
+        if (ts.length > 0) {
+            
+            ts.reverse();
+            ts.forEach(item => {
+                const itemWk = getWeekNumber(item[1]);
+                const itemMn = getMonthNumber(item[1]);
+    
+                if (itemWk[0] !== cpWk[0] || itemWk[1] !== cpWk[1]) {
+                    cpWk = itemWk;
+                    week = getNewWeekObject(item);
+                }
+                else {
+                    week = updateWeekObject(item, week, week);
+                }
+    
+                if (itemMn[0] !== cpMn[0] || itemMn[1] !== cpMn[1]) {
+                    cpMn = itemMn;
+                    month = getNewMonthObject(item);
+                } 
+                else {
+                    month = updateMonthObject(item, month, month);
+                }
+    
+                // add hourly value set into item which only contain daily value set in 'item'
+                const hour = addHourly(item);
+                const value = combineHourly(hour, week, month, item);
+    
+                console.log(item)
+    
+            })
+        }
+    }
+}
+
+function sliceTushareSet(tushare, latestDate) {
+    return tushare.values.filter(t => t[1] >= latestDate);
+}
+
+function findStartIndex(stock, latestDate) {
+    let sta = 0;
+    while (sta < stock.values.length) {
+        if (stock.values[sta].daily.date !== latestDate) {
+            return sta;
+        }
+        sta++;
+    }
+    return sta;
+}
