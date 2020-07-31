@@ -2,7 +2,7 @@ const axios = require("axios")
 const StockListItem = require("../models/StockListItem")
 const Candle = require("../models/Candle");
 
-const { updateArrStocks } = require("./function/dailyUpdateFunc")
+const { updateArrStocks, dataFromDbCombineWithWeekMonth } = require("./function/dailyUpdateFunc")
 const { tushareDate } = require("./function/dateUtils")
 const { groupByNum, arrGetDatesAndCodes, getOldestDate } = require("../middleware/function/arrayUtils")
 const { config, paramsWithDate} = require("../middleware/function/tushareUtils")
@@ -21,23 +21,28 @@ module.exports = {
                 updateItems.push({
                     ts_code: item.code,
                     start_date: tushareDate(item.latestUpdate),
-                    end_date: tushareDate(new Date)
+                    end_date: tushareDate(new Date),
+                    week: item.week,
+                    month: item.month
                 });
             }
         })
 
         req.updateItems = {};
+        req.updateItems.stockValue = [];
         req.updateItems.items = updateItems;
         next();
     },
     groupUpdateStock: async (req, res, next) => {
         const data = req.updateItems.items;
-        var n = 5;
+        var n = 2;
         var updateArr = groupByNum(data, n);
-
+        let len = updateArr.length;
+        
         updateArr.forEach(async arr => {
             let stock_db = [];
             let stock_ts = [];
+            
             
             // get smallest date
             // get all ts-code => put into arr
@@ -54,9 +59,18 @@ module.exports = {
                     paramsWithDate(ts_code, oldestDate, tushareDate(new Date)),
                     config()
                 );
+                stock_db = dataFromDbCombineWithWeekMonth(stock_db, arr);
                 stock_ts = res.data.data.items;
 
-                updateArrStocks(stock_ts, stock_db);
+                req.updateItems.stockValue 
+                    = req.updateItems
+                         .stockValue
+                         .concat(updateArrStocks(stock_ts, stock_db));
+                
+                len--;
+                if (len === 0) {
+                    next();
+                }
             } catch (error) {
                 res.send(error.message)
             }
@@ -67,6 +81,6 @@ module.exports = {
         //                 .map(Function.prototype.call, String.prototype.trim);
        
 
-        next();
+        // next();
     }
 }

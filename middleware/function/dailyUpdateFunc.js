@@ -14,6 +14,8 @@ const { getNodeText } = require("@testing-library/react");
 var self = module.exports = {
     updateArrStocks: (stock_ts, stock_db) => {
         const ts = self.groupByCode(stock_ts);
+
+        let res = [];
         
         stock_db.forEach(stock => {
             // find the latest update data
@@ -26,18 +28,16 @@ var self = module.exports = {
                 // update them
                 if (tushare.code === stock.code) {
                    const s = self.updateSingleStockWithDailyActivity(stock, tushare, latestDate);
-                   self.getIndicators(s);
+                //    const { stockValue, weekMonth } = ;
+                   res.push(self.getIndicators(s));
                 }
-            })
+            });
+
+
         });
+        return res;
     },
-    // groupMongoDoc: (stock_db) => {
-    //     let db = [];
-    //     stock_db.forEach(stock => 
-    //         db.push(new Candle(stock))
-    //     );
-    //     return db;
-    // },
+  
     groupByCode: (stock_ts) => {
         let ts = [];
         stock_ts.forEach(stock => {
@@ -46,26 +46,10 @@ var self = module.exports = {
                 ts.push({
                     code: stock[0],
                     values:[stock]
-                    // values: [{
-                    //     date: stock[1],
-                    //     open: stock[2],
-                    //     high: stock[3],
-                    //     low: stock[4],
-                    //     close: stock[5]
-                    // }]
                 });
             }
             else {
-                ts[index].values.push(
-                    stock
-                //     {
-                //     date: stock[1],
-                //     open: stock[2],
-                //     high: stock[3],
-                //     low: stock[4],
-                //     close: stock[5]
-                // }
-                )
+                ts[index].values.push(stock)
             }
         });
         return ts;
@@ -148,13 +132,26 @@ var self = module.exports = {
 
         let combinedDataSet = calculateIndicators(stocks, stockStartIndex);
 
-        req.stock.finalStock = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
-        
-        console.log(smaHourly08.sma.length);
-        // console.log(ema08.length)
+        return combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
+          
+    },
+    dataFromDbCombineWithWeekMonth: (stock_db, arr) => {
+        const len = stock_db.length;
+        let cnt = 0;
+        while (cnt < len) {
+            arr.forEach(a => {
+                if (a.ts_code == stock_db[cnt].code) {
+                    stock_db[cnt] = {
+                        ...stock_db[cnt],
+                        week: a.week,
+                        month: a.month
+                    }
+                }
+            })
 
-    
-  
+            cnt++;
+        }
+        return stock_db;
     }
 }
 

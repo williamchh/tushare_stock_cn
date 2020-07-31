@@ -8,7 +8,7 @@ var self = module.exports = {
       smaMonthly08, smaMonthly13, smaMonthly21,
       macdHourly, macdDaily, macdWeekly, macdMonthly,
       bandHourly, bandDaily, bandWeekly, bandMonthly,
-      dy, we, mt
+      dy, we, mt, weekValue, monthValue
     } = combinedDataSet;
 
     const len = stock.values.length;
@@ -134,10 +134,16 @@ var self = module.exports = {
         stock.values[cnt].monthly.nextSum21 = parseFloat(smaMonthly21.nextSum[cntMonth]);
       }
 
+      
       cnt++;
     }
 
-    return stock;
+    const weekMonth = {
+      week: weekValue,
+      month: monthValue
+    }
+
+    return {stockValue: stock, weekMonth};
   },
 
     getNewWeekObject: (item) => {

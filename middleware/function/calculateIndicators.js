@@ -12,35 +12,47 @@ var self = module.exports = {
 
         stocks.map((stock) => {
 
-        stock.values.map((value) => {
-            const { hourly, daily, weekly, monthly } = value;
-            // const weighted = (hourly.high + hourly.low + hourly.close * 2) / 4.0;
-            let has = false;
-            has = hasInArray(daily, dy);
-            if (!has) {
-            dy.push(daily.date);
-            days.push(daily.close);
-            }
+            stock.values.map((value) => {
+                const { hourly, daily, weekly, monthly } = value;
+                // const weighted = (hourly.high + hourly.low + hourly.close * 2) / 4.0;
+                let has = false;
+                has = hasInArray(daily, dy);
+                if (!has) {
+                dy.push(daily.date);
+                days.push(daily.close);
+                }
 
-            has = false;
-            has = hasInArray(weekly, we);
-            if (!has) {
-            we.push(weekly.date);
-            weeks.push(weekly.close);
-            }
+                has = false;
+                has = hasInArray(weekly, we);
+                if (!has) {
+                we.push(weekly.date);
+                weeks.push(weekly.close);
+                }
 
-            has = false;
-            has = hasInArray(monthly, mt);
-            if (!has) {
-            mt.push(monthly.date);
-            months.push(monthly.close);
-            }
+                has = false;
+                has = hasInArray(monthly, mt);
+                if (!has) {
+                mt.push(monthly.date);
+                months.push(monthly.close);
+                }
 
-            hours.push(hourly.close); 
+                hours.push(hourly.close); 
+            });
+
         });
-        });
 
-
+        let weekValue = null;
+        let monthValue = null;
+        if (startIndex === -1) {
+            weekValue = bindWeekMonth(we, weeks);
+            monthValue = bindWeekMonth(mt, months);
+        }
+        else {
+            weekValue = bindWeekMonthWithHst(we, weeks, stocks[0].week);
+            monthValue = bindWeekMonthWithHst(mt, months, stocks[0].month);
+            weeks = weekValue.map(v => v.value);
+            months = monthValue.map(v => v.value); 
+        }
 
         const smaHourly08 = sma(8, hours, startIndex);
         const smaHourly13 = sma(13, hours, startIndex);
@@ -75,7 +87,38 @@ var self = module.exports = {
             smaMonthly08, smaMonthly13, smaMonthly21,
             macdHourly, macdDaily, macdWeekly, macdMonthly,
             bandHourly, bandDaily, bandWeekly, bandMonthly,
-            dy, we, mt
+            dy, we, mt, weekValue, monthValue
           };
     }
+}
+
+function bindWeekMonth(date, value) {
+    let res = [];
+    for (let i = 0; i < date.length; i++) 
+        res.push({date: date[i], value: value[i]})        
+    
+    return res;
+}
+
+function bindWeekMonthWithHst(date, value, hst) {
+    let res = [];
+    for (let i = 0; i < date.length; i++) 
+        res.push({date: date[i], value: value[i]});
+    
+    const d = date[date.length - 1];
+
+    let cnt = 0;
+    let fnd = false;
+    while (!fnd && cnt < hst.length) {
+        if (hst[cnt].date === d) 
+            fnd = true;
+        
+        cnt++;
+    }
+
+    for (let i = cnt; i < hst.length; i++)
+        res.push(hst[i]);
+
+
+    return res;
 }

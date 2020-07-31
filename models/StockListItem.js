@@ -8,7 +8,27 @@ const StockListItemSchema = mongoose.Schema({
     latestUpdate: {
         type: Date,
         require: true
-    }
+    },
+    week: [{
+        date: {
+            type: String,
+            require: true
+        },
+        value: {
+            type: Number,
+            require: true
+        }
+    }],
+    month: [{
+        date: {
+            type: String,
+            require: true
+        },
+        value: {
+            type: Number,
+            require: true
+        }
+    }]
 })
 
-module.exports = mongoose.model('stockListItemSchema', StockListItemSchema)
+module.exports = mongoose.model('stockListItem', StockListItemSchema)

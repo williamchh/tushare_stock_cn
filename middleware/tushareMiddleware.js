@@ -156,7 +156,10 @@ module.exports = {
 
     let combinedDataSet = calculateIndicators(stocks);
 
-    req.stock.finalStock = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
+    const { stockValue, weekMonth } = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
+
+    req.stock.finalStock = stockValue;
+    req.stock.weekMonth = weekMonth;
     
     console.log(combinedDataSet.smaHourly08.sma.length);
     // console.log(ema08.length)
