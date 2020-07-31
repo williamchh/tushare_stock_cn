@@ -1,5 +1,39 @@
 
 var self = module.exports = {
+  getHstDataArr: (stock_db) => {
+    let stocks = [];
+    
+    stock_db.forEach(stock => {
+      
+      let days = [];
+      let weeks = [];
+      let months = [];
+      days.push({date: stock.values[0].daily.date, value:stock.values[0].daily});
+      weeks.push({date: stock.values[0].weekly.date, value: stock.values[0].weekly});
+      months.push({date: stock.values[0].monthly.date, value: stock.values[0].monthly});
+
+      stock.values.forEach(value => {
+        if (value.daily.date !== days[days.length - 1].date) {
+          days.push({date: value.daily.date,value: value.daily});
+        }
+        if (value.weekly.date !== weeks[weeks.length - 1].date) {
+          weeks.push({date: value.weekly.date,value: value.weekly});
+        }
+        if (value.monthly.date !== months[months.length - 1].date) {
+          months.push({date: value.monthly.date, value: value.monthly});
+        }
+      })
+
+      stocks.push({
+        code: stock.code,
+        hst:{
+          days, weeks, months
+        }
+      });
+
+    });
+    return stocks;
+  },
   combineCandleValuesWithIndicators: (stock, combinedDataSet) => {
     const {
       smaHourly08, smaHourly13, smaHourly21,

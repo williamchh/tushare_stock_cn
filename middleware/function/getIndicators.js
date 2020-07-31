@@ -1,6 +1,6 @@
 
 var self = module.exports = {
-  sma: (period, prices, startPos = -1) => {
+  sma: (period, prices, hst = null) => {
     let len = prices.length;
     let sma = [];
     let nextSum = [];
@@ -13,9 +13,15 @@ var self = module.exports = {
       pos = period;
     }
     for (let i = 1; i < period; i++, pos--) {
-      // console.log(`i => ${i} , pos => ${pos}`);
+
       sum = sum + Number(prices[pos]);
-      // console.log(`sum => ${sum}`);
+
+    }
+
+    const { hstValue, startIndex } = hst;
+    if (startIndex > -1) {
+      len = startIndex;
+      pos = len - 1;
     }
 
     // --- main caculation loop

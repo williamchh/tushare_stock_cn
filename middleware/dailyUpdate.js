@@ -2,6 +2,7 @@ const axios = require("axios")
 const StockListItem = require("../models/StockListItem")
 const Candle = require("../models/Candle");
 
+const { getHstDataArr } = require("./function/dataProcess")
 const { updateArrStocks, dataFromDbCombineWithWeekMonth } = require("./function/dailyUpdateFunc")
 const { tushareDate } = require("./function/dateUtils")
 const { groupByNum, arrGetDatesAndCodes, getOldestDate } = require("../middleware/function/arrayUtils")
@@ -38,6 +39,7 @@ module.exports = {
         var n = 2;
         var updateArr = groupByNum(data, n);
         let len = updateArr.length;
+        let hstArr = [];
         
         updateArr.forEach(async arr => {
             let stock_db = [];
@@ -62,10 +64,12 @@ module.exports = {
                 stock_db = dataFromDbCombineWithWeekMonth(stock_db, arr);
                 stock_ts = res.data.data.items;
 
+                hstArr = hstArr.concat(getHstDataArr(stock_db));
+
                 req.updateItems.stockValue 
                     = req.updateItems
                          .stockValue
-                         .concat(updateArrStocks(stock_ts, stock_db));
+                         .concat(updateArrStocks(stock_ts, stock_db, hstArr));
                 
                 len--;
                 if (len === 0) {

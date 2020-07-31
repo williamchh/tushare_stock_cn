@@ -12,10 +12,27 @@ const { getNewWeekObject,
 const { getNodeText } = require("@testing-library/react");
 
 var self = module.exports = {
-    updateArrStocks: (stock_ts, stock_db) => {
+    combineDbWithHstArr: (stock_db, hstArr) => {
+        let c = [];
+        stock_db.forEach(stock => {
+            
+            hstArr.forEach(hst => {
+                if (hst.code === stock.code) {
+                    c.push({
+                        ...stock,
+                        hst: hst.hst
+                    })
+                }
+            })
+        })
+        return c;
+    },
+    updateArrStocks: (stock_ts, stock_db, hstArr) => {
         const ts = self.groupByCode(stock_ts);
 
         let res = [];
+
+        stock_db = self.combineDbWithHstArr(stock_db, hstArr);
         
         stock_db.forEach(stock => {
             // find the latest update data

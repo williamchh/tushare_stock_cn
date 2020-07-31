@@ -43,7 +43,7 @@ module.exports = {
       req.stock.data = stocks.data;
     } catch (error) {
       console.log(error);
-      return res.send(error.response);
+      return res.send(error.message);
     }
 
     next();
