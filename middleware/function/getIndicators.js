@@ -1,6 +1,6 @@
 
 var self = module.exports = {
-  sma: (period, prices) => {
+  sma: (period, prices, startPos = -1) => {
     let len = prices.length;
     let sma = [];
     let nextSum = [];
@@ -39,7 +39,7 @@ var self = module.exports = {
     return ({sma, nextSum});
   },
 
-  ema: (period, prices) => {
+  ema: (period, prices, startPos = -1) => {
     let buffer = [];
     const pr = 2.0 / (period + 1);
     const len = prices.length - 2;
@@ -56,7 +56,7 @@ var self = module.exports = {
     return buffer;
   },
 
-  macd: (fast, slow, signal, prices) => {
+  macd: (fast, slow, signal, prices, startPos = -1) => {
     let macd = [];
     let signals = [];
     const emaFast = self.ema(fast, prices);
@@ -81,7 +81,7 @@ var self = module.exports = {
 
     return {macd, signal: signals, ema21: emaFast, ema34: emaSlow};
   },
-  bands: (period, width, prices, ma21) => {
+  bands: (period, width, prices, ma21, startPos = -1) => {
     let stddev = [];
     const upperBand = [];
     const lowerBand = [];
@@ -97,7 +97,7 @@ var self = module.exports = {
   },
   // Standard Deviation
   // position: int, prices: array, ma: array, period: int
-  standardDeviation: (prices, ma, period) => {
+  standardDeviation: (prices, ma, period, startPos = -1) => {
     let stddev = [];
 
     let pos = prices.length;

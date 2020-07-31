@@ -1,6 +1,5 @@
 const axios = require("axios");
-const { sma, macd, bands } = require("./function/getIndicators");
-const { hasInArray } = require("./function/arrayUtils")
+const { calculateIndicators } = require("../middleware/function/calculateIndicators")
 const { dateString, getWeekNumber, getMonthNumber, weeksInYear } = require("./function/dateUtils")
 const { getNewWeekObject, 
         getNewMonthObject, 
@@ -153,85 +152,13 @@ module.exports = {
 
   getIndicators: (req, res, next) => {
     let stocks = req.stock.values;
-    let hours = [];
-    let days = [];
-    let weeks = [];
-    let months = [];
-    let dy = [];
-    let we = [];
-    let mt = [];
+    
 
-    stocks.map((stock) => {
-
-      stock.values.map((value) => {
-        const { hourly, daily, weekly, monthly } = value;
-        // const weighted = (hourly.high + hourly.low + hourly.close * 2) / 4.0;
-        let has = false;
-        has = hasInArray(daily, dy);
-        if (!has) {
-          dy.push(daily.date);
-          days.push(daily.close);
-        }
-
-        has = false;
-        has = hasInArray(weekly, we);
-        if (!has) {
-          we.push(weekly.date);
-          weeks.push(weekly.close);
-        }
-
-        has = false;
-        has = hasInArray(monthly, mt);
-        if (!has) {
-          mt.push(monthly.date);
-          months.push(monthly.close);
-        }
-
-        hours.push(hourly.close); 
-      });
-    });
-
-
-
-    const smaHourly08 = sma(8, hours);
-    const smaHourly13 = sma(13, hours);
-    const smaHourly21 = sma(21, hours);
-
-    const smaDaily08 = sma(8, days);
-    const smaDaily13 = sma(13, days);
-    const smaDaily21 = sma(21, days);
-
-    const smaWeekly08 = sma(8, weeks);
-    const smaWeekly13 = sma(13, weeks);
-    const smaWeekly21 = sma(21, weeks);
-
-    const smaMonthly08 = sma(8, months);
-    const smaMonthly13 = sma(13, months);
-    const smaMonthly21 = sma(21, months);
-
-    const macdHourly = macd(21, 34, 8, hours);
-    const macdDaily = macd(21, 34, 8, days);
-    const macdWeekly = macd(21, 34, 8, weeks);
-    const macdMonthly = macd(21, 34, 8, months);
-
-    const bandHourly = bands(21, 1.618, hours, smaHourly21.sma);
-    const bandDaily = bands(21, 1.618, days, smaDaily21.sma);
-    const bandWeekly = bands(21, 1.618, weeks, smaWeekly21.sma);
-    const bandMonthly = bands(21, 1.618, months, smaMonthly21.sma);
-
-    let combinedDataSet = {
-      smaHourly08, smaHourly13, smaHourly21,
-      smaDaily08, smaDaily13, smaDaily21,
-      smaWeekly08, smaWeekly13, smaWeekly21,
-      smaMonthly08, smaMonthly13, smaMonthly21,
-      macdHourly, macdDaily, macdWeekly, macdMonthly,
-      bandHourly, bandDaily, bandWeekly, bandMonthly,
-      dy, we, mt
-    };
+    let combinedDataSet = calculateIndicators(stocks);
 
     req.stock.finalStock = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
     
-    console.log(smaHourly08.sma.length);
+    console.log(combinedDataSet.smaHourly08.sma.length);
     // console.log(ema08.length)
 
     next();
