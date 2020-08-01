@@ -20,7 +20,7 @@ var self = (module.exports = {
     if (startIndex > -1) {
       pos = startIndex + 1;
       len = pos;
-      sum = hstValue.nexSum[pos];
+      sum = hstValue.nexSum[pos + 1];
       sma = hstValue.ma;
       nextSum = hstValue.nexSum;
 
@@ -55,14 +55,13 @@ var self = (module.exports = {
   },
 
   ema: (period, prices, hst = null) => {
-    const { hstValue, startIndex } = hst;
-
     let buffer = [];
     const pr = 2.0 / (period + 1);
     const len = prices.length - 2;
 
     let pos = len;
-    if (startIndex > -1) {
+    if (hst.startIndex > -1) {
+      const { hstValue, startIndex } = hst;
       pos = startIndex + 1;
 
       if (period === 21) buffer = hstValue.fast21;
@@ -90,8 +89,8 @@ var self = (module.exports = {
     let emaSlow = [];
 
     if (hst.startIndex === -1) {
-      emaFast = self.ema(fast, prices);
-      emaSlow = self.ema(slow, prices);
+      emaFast = self.ema(fast, prices, hst);
+      emaSlow = self.ema(slow, prices, hst);
     } else {
       emaFast = self.ema(fast, prices, hst);
       emaSlow = self.ema(slow, prices, hst);
@@ -109,7 +108,7 @@ var self = (module.exports = {
     }
 
     // SIGNAL calculation
-    if (hst.startIndex === -1) signals = self.ema(signal, macd);
+    if (hst.startIndex === -1) signals = self.ema(signal, macd, hst);
     else signals = self.ema(signal, macd, hst);
 
     return { macd, signal: signals, ema21: emaFast, ema34: emaSlow };

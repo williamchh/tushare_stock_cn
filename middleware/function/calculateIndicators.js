@@ -46,10 +46,12 @@ var self = (module.exports = {
       weekValue = bindWeekMonth(we, weeks);
       monthValue = bindWeekMonth(mt, months);
     } else {
+      weekValue = stocks[0].week;
+      monthValue = stocks[0].month;
       hours = stocks[0].values.map((v) => v.hourly.close);
       days = stocks[0].hst.days.map((d) => d.value.close);
-      weeks = stocks[0].week.map((d) => d.value);
-      months = stocks[0].month.map((d) => d.value);
+      weeks = weekValue.map((d) => d.value);
+      months = monthValue.map((d) => d.value);
       //   we = stocks[0].week.map((d) => d.date);
       //   mt = stocks[0].month.map((d) => d.date);
       //   weekValue = bindWeekMonthWithHst(we, weeks, stocks[0].week);
