@@ -147,19 +147,28 @@ var self = (module.exports = {
 
     if (hst.startIndex > -1) {
       pos = hst.startIndex + 1;
-    }
-
-    while (pos >= 0) {
-      if (pos > ma.length - period) {
-        stddev[pos - 1] = 0.0;
-      } else {
+      while (pos >= 0) {
         let sdd = 0.0;
         for (let i = 0; i < period; i++) {
           sdd += Math.pow(prices[pos + i] - ma[pos], 2);
         }
         stddev[pos] = parseFloat(Math.sqrt(sdd / period)).toFixed(5);
+
+        pos--;
       }
-      pos--;
+    } else {
+      while (pos >= 0) {
+        if (pos > ma.length - period) {
+          stddev[pos - 1] = 0.0;
+        } else {
+          let sdd = 0.0;
+          for (let i = 0; i < period; i++) {
+            sdd += Math.pow(prices[pos + i] - ma[pos], 2);
+          }
+          stddev[pos] = parseFloat(Math.sqrt(sdd / period)).toFixed(5);
+        }
+        pos--;
+      }
     }
 
     return stddev;

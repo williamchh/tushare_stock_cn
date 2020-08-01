@@ -69,7 +69,27 @@ var self = (module.exports = {
 
   updateToDb: async (res) => {
     res.forEach((result) => {
-      console.log(result);
+      const { stockValue, weekMonth } = result;
+      const sv = {
+        code: stockValue.code,
+        updateDate: new Date().toISOString(),
+        values: stockValue.values,
+      };
+
+      const listItem = {
+        code: stockValue.code,
+        latestUpdate: new Date().toISOString(),
+        week: weekMonth.week,
+        month: weekMonth.month,
+      };
+
+      const stock = new StockListItem(sv);
+      const stockListItem = new StockListItem(listItem);
+
+      stock.update();
+      stockListItem.save();
+
+      // console.log(result);
     });
   },
 

@@ -1,4 +1,4 @@
-const { sma, macd, bands } = require("./getIndicators");
+const { sma, macd, bands } = require("./indicatorsSet");
 const { hasInArray } = require("./arrayUtils");
 var self = (module.exports = {
   calculateIndicators: (stocks, startIndex = -1) => {

@@ -43,7 +43,6 @@ var self = (module.exports = {
     return stocks;
   },
   combineCandleValuesWithIndicators: (stock, combinedDataSet) => {
-    console.log("in");
     const {
       smaHourly08,
       smaHourly13,
