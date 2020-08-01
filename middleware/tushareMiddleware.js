@@ -153,6 +153,10 @@ module.exports = {
   getIndicators: (req, res, next) => {
     let stocks = req.stock.values;
     
+    stocks[0] = {
+      ...stocks[0],
+      hst:{ days: [],weeks: [], months: [] }
+    }
 
     let combinedDataSet = calculateIndicators(stocks);
 
