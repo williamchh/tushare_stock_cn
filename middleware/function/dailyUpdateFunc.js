@@ -68,7 +68,7 @@ var self = (module.exports = {
   },
 
   updateToDb: async (res) => {
-    res.forEach((result) => {
+    res.forEach(async (result) => {
       const { stockValue, weekMonth } = result;
       const sv = {
         code: stockValue.code,
@@ -83,11 +83,16 @@ var self = (module.exports = {
         month: weekMonth.month,
       };
 
-      const stock = new StockListItem(sv);
-      const stockListItem = new StockListItem(listItem);
+      const stockFilter = { code: sv.code };
+      // let stock = await Candle.findOneAndUpdate(stockFilter, sv);
 
-      stock.update();
-      stockListItem.save();
+      let item = await StockListItem.findOneAndUpdate(stockFilter, listItem);
+      console.log(item);
+      // const stock = new Candle(sv);
+      // const stockListItem = new StockListItem(listItem);
+
+      // stock.update();
+      // stockListItem.save();
 
       // console.log(result);
     });
