@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
   stocks.forEach((stock) => {
     delete stock._id;
     delete stock.updateDate;
+    delete stock.__v;
     stock.values.forEach((value) => {
       delete value._id;
       delete value.hourly.nextSum08;
