@@ -84,17 +84,10 @@ var self = (module.exports = {
       };
 
       const stockFilter = { code: sv.code };
-      // let stock = await Candle.findOneAndUpdate(stockFilter, sv);
+      let stock = await Candle.findOneAndUpdate(stockFilter, sv);
 
       let item = await StockListItem.findOneAndUpdate(stockFilter, listItem);
-      console.log(item);
-      // const stock = new Candle(sv);
-      // const stockListItem = new StockListItem(listItem);
-
-      // stock.update();
-      // stockListItem.save();
-
-      // console.log(result);
+      // console.log(item);
     });
   },
 
@@ -210,6 +203,8 @@ var self = (module.exports = {
             week: a.week,
             month: a.month,
           };
+          delete stock_db[cnt]._id;
+          stock_db[cnt].values.forEach((v) => delete v._id);
         }
       });
 

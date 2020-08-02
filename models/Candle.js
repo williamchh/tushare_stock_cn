@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 
 const CandleSchema = mongoose.Schema({
+  // _id: false,
   code: {
     type: String,
-    require: true,
     unique: true,
+    index: true,
+    required: true,
   },
-  updateDate:{
-    type: Date
+  updateDate: {
+    type: Date,
   },
   values: [
     {

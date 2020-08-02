@@ -111,6 +111,16 @@ var self = (module.exports = {
         stock.values[cnt].daily.nextSum08 = parseFloat(smaDaily08.nextSum[cnt]);
         stock.values[cnt].daily.nextSum13 = parseFloat(smaDaily13.nextSum[cnt]);
         stock.values[cnt].daily.nextSum21 = parseFloat(smaDaily21.nextSum[cnt]);
+
+        if (isNaN(stock.values[cnt].daily.nextSum08))
+          stock.values[cnt].daily.nextSum08 =
+            stock.values[cnt - 1].daily.nextSum08;
+        if (isNaN(stock.values[cnt].daily.nextSum13))
+          stock.values[cnt].daily.nextSum13 =
+            stock.values[cnt - 1].daily.nextSum13;
+        if (isNaN(stock.values[cnt].daily.nextSum21))
+          stock.values[cnt].daily.nextSum21 =
+            stock.values[cnt - 1].daily.nextSum21;
       } else {
         cntDay++;
         stock.values[cnt].daily.macd = parseFloat(macdDaily.macd[cntDay]);
@@ -126,6 +136,16 @@ var self = (module.exports = {
         stock.values[cnt].daily.nextSum08 = parseFloat(smaDaily08.nextSum[cnt]);
         stock.values[cnt].daily.nextSum13 = parseFloat(smaDaily13.nextSum[cnt]);
         stock.values[cnt].daily.nextSum21 = parseFloat(smaDaily21.nextSum[cnt]);
+
+        if (isNaN(stock.values[cnt].daily.nextSum08))
+          stock.values[cnt].daily.nextSum08 =
+            stock.values[cnt - 1].daily.nextSum08;
+        if (isNaN(stock.values[cnt].daily.nextSum13))
+          stock.values[cnt].daily.nextSum13 =
+            stock.values[cnt - 1].daily.nextSum13;
+        if (isNaN(stock.values[cnt].daily.nextSum21))
+          stock.values[cnt].daily.nextSum21 =
+            stock.values[cnt - 1].daily.nextSum21;
       }
 
       // weekly

@@ -146,6 +146,7 @@ var self = (module.exports = {
     let pos = prices.length;
 
     if (hst.startIndex > -1) {
+      const { hstValue, startIndex } = hst;
       pos = hst.startIndex + 1;
       while (pos >= 0) {
         let sdd = 0.0;
@@ -155,6 +156,11 @@ var self = (module.exports = {
         stddev[pos] = parseFloat(Math.sqrt(sdd / period)).toFixed(5);
 
         pos--;
+      }
+      pos = stddev.length;
+      while (pos < hstValue.sd.length) {
+        stddev[pos] = hstValue.sd[pos];
+        pos++;
       }
     } else {
       while (pos >= 0) {
@@ -174,52 +180,3 @@ var self = (module.exports = {
     return stddev;
   },
 });
-
-// int start()
-//   {
-//    int    i,j,nLimit,nCountedBars;
-//    double dAPrice,dAmount,dMovingAverage;
-// //---- insufficient data
-//    if(Bars<=ExtStdDevPeriod) return(0);
-// //---- bars count that does not changed after last indicator launch.
-//    nCountedBars=IndicatorCounted();
-// //----Standard Deviation calculation
-//    i=Bars-ExtStdDevPeriod-1;
-//    if(nCountedBars>ExtStdDevPeriod)
-//       i=Bars-nCountedBars;
-//    while(i>=0)
-//      {
-//       dAmount=0.0;
-//       dMovingAverage=iMA(NULL,0,ExtStdDevPeriod,0,ExtStdDevMAMethod,ExtStdDevAppliedPrice,i);
-//       for(j=0; j<ExtStdDevPeriod; j++)
-//         {
-//          dAPrice=GetAppliedPrice(ExtStdDevAppliedPrice,i+j);
-//          dAmount+=(dAPrice-dMovingAverage)*(dAPrice-dMovingAverage);
-//         }
-//       ExtStdDevBuffer[i]=MathSqrt(dAmount/ExtStdDevPeriod);
-//       i--;
-//      }
-// //----
-//    return(0);
-//   }
-// //+------------------------------------------------------------------+
-// //|                                                                  |
-// //+------------------------------------------------------------------+
-// double GetAppliedPrice(int nAppliedPrice, int nIndex)
-//   {
-//    double dPrice;
-// //----
-//    switch(nAppliedPrice)
-//      {
-//       case 0:  dPrice=Close[nIndex];                                  break;
-//       case 1:  dPrice=Open[nIndex];                                   break;
-//       case 2:  dPrice=High[nIndex];                                   break;
-//       case 3:  dPrice=Low[nIndex];                                    break;
-//       case 4:  dPrice=(High[nIndex]+Low[nIndex])/2.0;                 break;
-//       case 5:  dPrice=(High[nIndex]+Low[nIndex]+Close[nIndex])/3.0;   break;
-//       case 6:  dPrice=(High[nIndex]+Low[nIndex]+2*Close[nIndex])/4.0; break;
-//       default: dPrice=0.0;
-//      }
-// //----
-//    return(dPrice);
-//   }
