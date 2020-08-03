@@ -87,22 +87,29 @@ var self = (module.exports = {
     let signals = [];
     let emaFast = [];
     let emaSlow = [];
+    let len = prices.length;
+    let pos = len;
 
     if (hst.startIndex === -1) {
       emaFast = self.ema(fast, prices, hst);
       emaSlow = self.ema(slow, prices, hst);
     } else {
+      macd = hst.hstValue.mkd;
+      signals = hst.hstValue.sgn;
       emaFast = self.ema(fast, prices, hst);
       emaSlow = self.ema(slow, prices, hst);
+      len = hst.startIndex;
+      pos = len;
     }
-
-    const len = prices.length;
-    let pos = len;
 
     // MACD calculation
     while (pos >= 0) {
-      if (pos > len - slow) macd[pos - 1] = 0;
-      else macd[pos] = parseFloat(emaFast[pos] - emaSlow[pos]).toFixed(5);
+      if (hst.startIndex > -1) {
+        macd[pos] = parseFloat(emaFast[pos] - emaSlow[pos]).toFixed(5);
+      } else {
+        if (pos > len - slow) macd[pos - 1] = 0;
+        else macd[pos] = parseFloat(emaFast[pos] - emaSlow[pos]).toFixed(5);
+      }
 
       pos--;
     }

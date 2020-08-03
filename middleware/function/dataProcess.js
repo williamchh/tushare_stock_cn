@@ -149,6 +149,9 @@ var self = (module.exports = {
       }
 
       // weekly
+      if (cnt === 0 && value.weekly.date > we[cntWeek]) {
+        we.unshift(value.weekly.date);
+      }
       if (value.weekly.date === we[cntWeek]) {
         stock.values[cnt].weekly.macd = parseFloat(macdWeekly.macd[cntWeek]);
         stock.values[cnt].weekly.signal = parseFloat(
@@ -206,6 +209,9 @@ var self = (module.exports = {
       }
 
       // Month
+      if (cnt === 0 && value.monthly.date > mt[cntMonth]) {
+        mt.unshift(value.monthly.date);
+      }
       if (value.monthly.date === mt[cntMonth]) {
         stock.values[cnt].monthly.macd = parseFloat(macdMonthly.macd[cntMonth]);
         stock.values[cnt].monthly.signal = parseFloat(
@@ -284,6 +290,9 @@ var self = (module.exports = {
         stock.values[cnt].monthly.nextSum21 = parseFloat(
           smaMonthly21.nextSum[cntMonth]
         );
+      }
+      if (isNaN(stock.values[cnt].weekly.nextSum08)) {
+        console.log(cnt);
       }
 
       cnt++;

@@ -1,5 +1,5 @@
 const { sma, macd, bands } = require("./indicatorsSet");
-const { hasInArray } = require("./arrayUtils");
+const { hasInArray, getMacd } = require("./arrayUtils");
 var self = (module.exports = {
   calculateIndicators: (stocks, startIndex = -1) => {
     let hours = [];
@@ -64,6 +64,22 @@ var self = (module.exports = {
       //   weeks = weekValue.map((v) => v.value);
       //   months = monthValue.map((v) => v.value);
     }
+
+    const {
+      mkd,
+      sgn,
+      ma08,
+      ma13,
+      ma21,
+      em21,
+      em34,
+      ntSum08,
+      ntSum13,
+      ntSum21,
+      up,
+      low,
+      sd,
+    } = getMacd(stocks[0].values);
 
     const smaHourly08 = sma(8, hours, {
       hstValue: {
@@ -133,22 +149,22 @@ var self = (module.exports = {
 
     const smaMonthly08 = sma(8, months, {
       hstValue: {
-        ma: stocks[0].hst.months.map((d) => d.value.sma08),
-        nexSum: stocks[0].hst.months.map((d) => d.value.nextSum08),
+        ma: ma08, // stocks[0].hst.months.map((d) => d.value.sma08),
+        nexSum: ntSum08, // stocks[0].hst.months.map((d) => d.value.nextSum08),
       },
       startIndex,
     });
     const smaMonthly13 = sma(13, months, {
       hstValue: {
-        ma: stocks[0].hst.months.map((d) => d.value.sma13),
-        nexSum: stocks[0].hst.months.map((d) => d.value.nextSum13),
+        ma: ma13, // stocks[0].hst.months.map((d) => d.value.sma13),
+        nexSum: ntSum13, // stocks[0].hst.months.map((d) => d.value.nextSum13),
       },
       startIndex,
     });
     const smaMonthly21 = sma(21, months, {
       hstValue: {
-        ma: stocks[0].hst.months.map((d) => d.value.sma21),
-        nexSum: stocks[0].hst.months.map((d) => d.value.nextSum21),
+        ma: ma21, // stocks[0].hst.months.map((d) => d.value.sma21),
+        nexSum: ntSum21, // stocks[0].hst.months.map((d) => d.value.nextSum21),
       },
       startIndex,
     });
@@ -180,12 +196,13 @@ var self = (module.exports = {
       },
       startIndex,
     });
+
     const macdMonthly = macd(21, 34, 8, months, {
       hstValue: {
-        fast21: stocks[0].hst.months.map((d) => d.value.ema21),
-        slow34: stocks[0].hst.months.map((d) => d.value.ema34),
-        mkd: stocks[0].hst.months.map((d) => d.value.macd),
-        sgn: stocks[0].hst.months.map((d) => d.value.signal),
+        fast21: em21, // stocks[0].hst.months.map((d) => d.value.ema21),
+        slow34: em34, // stocks[0].hst.months.map((d) => d.value.ema34),
+        mkd: mkd, // stocks[0].hst.months.map((d) => d.value.macd),
+        sgn: sgn, // stocks[0].hst.months.map((d) => d.value.signal),
       },
       startIndex,
     });
@@ -216,9 +233,9 @@ var self = (module.exports = {
     });
     const bandMonthly = bands(21, 1.618, months, smaMonthly21.sma, {
       hstValue: {
-        u: stocks[0].hst.months.map((d) => d.value.upper),
-        l: stocks[0].hst.months.map((d) => d.value.lower),
-        sd: stocks[0].hst.months.map((d) => d.value.stddv),
+        u: up, // stocks[0].hst.months.map((d) => d.value.upper),
+        l: low, // stocks[0].hst.months.map((d) => d.value.lower),
+        sd: sd, // stocks[0].hst.months.map((d) => d.value.stddv),
       },
       startIndex,
     });
