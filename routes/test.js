@@ -1,7 +1,40 @@
 const express = require("express");
 const router = express.Router();
 const TestItem = require("../models/TestItem");
+const { isEqual } = require("../middleware/function/setUtils");
 // const { getWeekNumber } = require("../middleware/function/dateUtils")
+
+router.get("/", (req, res) => {
+  Set.prototype.addObj = function (obj) {
+    var set = new Set(this.valueOf());
+
+    let has = false;
+    set.forEach((s) => {
+      if (isEqual(s, obj)) has = true;
+    });
+
+    if (!has) {
+      set.add(obj);
+    }
+    return set;
+  };
+  let s = new Set();
+
+  // arr.forEach(
+  //   (obj) => !s.has(JSON.stringify(obj)) && s.add(JSON.stringify(obj))
+  // );
+
+  s = new Set();
+
+  s = s.addObj({ key: "abc" });
+  s = s.addObj({ key: "abc" });
+  s = s.addObj({ key: "abc" });
+
+  s = s.addObj({ key: "bcd" });
+
+  console.log(s.length);
+  res.send(set.length);
+});
 
 router.post("/", (req, res) => {
   const testItem = new TestItem({

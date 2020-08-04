@@ -2,7 +2,6 @@ const axios = require("axios");
 const StockListItem = require("../models/StockListItem");
 const Candle = require("../models/Candle");
 
-const { getHstDataArr } = require("./function/dataProcess");
 const {
   updateArrStocks,
   dataFromDbCombineWithWeekMonth,
@@ -44,7 +43,7 @@ module.exports = {
     var n = 2;
     var updateArr = groupByNum(data, n);
     let len = updateArr.length;
-    let hstArr = [];
+    // let hstArr = [];
 
     updateArr.forEach(async (arr) => {
       let stock_db = [];
@@ -67,10 +66,12 @@ module.exports = {
         stock_db = dataFromDbCombineWithWeekMonth(stock_db, arr);
         stock_ts = res.data.data.items;
 
-        hstArr = hstArr.concat(getHstDataArr(stock_db));
+        // hstArr = hstArr.concat(getHstDataArr(stock_db));
+
+        // hstArr = updateHstArrWithTushareData(hstArr, stock_ts);
 
         req.updateItems.stockValue = req.updateItems.stockValue.concat(
-          updateArrStocks(stock_ts, stock_db, hstArr)
+          updateArrStocks(stock_ts, stock_db)
         );
 
         len--;

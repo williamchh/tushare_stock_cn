@@ -1,3 +1,6 @@
+const { getWeekNumber, getMonthNumber } = require("./dateUtils");
+const { isEqual } = require("./setUtils");
+
 var self = (module.exports = {
   getHstDataArr: (stock_db) => {
     let stocks = [];
@@ -41,6 +44,101 @@ var self = (module.exports = {
       });
     });
     return stocks;
+  },
+
+  updateStockDBWithTushareData: (stock_db, ts) => {
+    Set.prototype.addObj = function (obj) {
+      var set = new Set(this.valueOf());
+
+      let has = false;
+      set.forEach((s) => {
+        if (isEqual(s, obj)) has = true;
+      });
+
+      if (!has) {
+        set.add(obj);
+      }
+      return { set, has };
+    };
+    let stock = ts;
+    let wk = new Set();
+    let mn = new Set();
+    stock.forEach((s) => {
+      for (let i = 0; i < stock_db.length; i++) {
+        const element = stock_db[i];
+
+        if (s.code === element.code) {
+          s.values.reverse().forEach((v) => {
+            //
+            // add new values include hourly, daily, weekly, monthly
+            //
+            if (v[1] > stock_db[i].values[0].daily.date) {
+              var hrs = self.addHourly(v);
+              var w = self.getNewWeekObject(v);
+              var m = self.getNewMonthObject(v);
+              const { values } = self.combineHourly(hrs, w, m, v);
+              values.reverse();
+              stock_db[i].values = values.concat(stock_db[i].values);
+              // console.log(hrs);
+            }
+
+            //
+            // add new week cache
+            //
+            if (v[1] > stock_db[i].week[0].date) {
+              const newDate = getWeekNumber(v[1]);
+              const oldDate = getWeekNumber(stock_db[i].week[0].date);
+              if (newDate[0] > oldDate[0]) {
+                const { set, has } = wk.addObj({
+                  code: stock_db[i].code,
+                  date: v[1],
+                  value: v[5],
+                });
+                wk = set;
+                if (!has) stock_db[i].week.unshift({ date: v[1], value: v[5] });
+              } else if (newDate[0] === oldDate[0] && newDate[1] > oldDate[1]) {
+                const { set, has } = wk.addObj({
+                  code: stock_db[i].code,
+                  date: v[1],
+                  value: v[5],
+                });
+                wk = set;
+                if (!has) stock_db[i].week.unshift({ date: v[1], value: v[5] });
+              }
+            }
+
+            //
+            // add new month cache
+            //
+            if (v[1] > stock_db[i].month[0].date) {
+              const newDate = getMonthNumber(v[1]);
+              const oldDate = getMonthNumber(stock_db[i].month[0].date);
+              if (newDate[0] > oldDate[0]) {
+                const { set, has } = mn.addObj({
+                  code: stock_db[i].code,
+                  date: v[1],
+                  value: v[5],
+                });
+                mn = set;
+                if (!has)
+                  stock_db[i].month.unshift({ date: v[1], value: v[5] });
+              } else if (newDate[0] === oldDate[0] && newDate[1] > oldDate[1]) {
+                const { set, has } = mn.addObj({
+                  code: stock_db[i].code,
+                  date: v[1],
+                  value: v[5],
+                });
+                mn = set;
+                if (!has)
+                  stock_db[i].month.unshift({ date: v[1], value: v[5] });
+              }
+            }
+          });
+        }
+      }
+    });
+
+    return stock_db;
   },
   combineCandleValuesWithIndicators: (stock, combinedDataSet) => {
     const {
@@ -148,10 +246,10 @@ var self = (module.exports = {
             stock.values[cnt - 1].daily.nextSum21;
       }
 
-      // weekly
-      if (cnt === 0 && value.weekly.date > we[cntWeek]) {
-        we.unshift(value.weekly.date);
-      }
+      // weekly;
+      // if (cnt === 0 && value.weekly.date > we[cntWeek]) {
+      //   we.unshift(value.weekly.date);
+      // }
       if (value.weekly.date === we[cntWeek]) {
         stock.values[cnt].weekly.macd = parseFloat(macdWeekly.macd[cntWeek]);
         stock.values[cnt].weekly.signal = parseFloat(
@@ -209,9 +307,9 @@ var self = (module.exports = {
       }
 
       // Month
-      if (cnt === 0 && value.monthly.date > mt[cntMonth]) {
-        mt.unshift(value.monthly.date);
-      }
+      // if (cnt === 0 && value.monthly.date > mt[cntMonth]) {
+      //   mt.unshift(value.monthly.date);
+      // }
       if (value.monthly.date === mt[cntMonth]) {
         stock.values[cnt].monthly.macd = parseFloat(macdMonthly.macd[cntMonth]);
         stock.values[cnt].monthly.signal = parseFloat(
@@ -291,7 +389,7 @@ var self = (module.exports = {
           smaMonthly21.nextSum[cntMonth]
         );
       }
-      if (isNaN(stock.values[cnt].weekly.nextSum08)) {
+      if (isNaN(stock.values[cnt].monthly.nextSum21)) {
         console.log(cnt);
       }
 

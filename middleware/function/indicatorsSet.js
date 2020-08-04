@@ -7,14 +7,6 @@ var self = (module.exports = {
     let sum = 0;
     let pos = len - 1;
 
-    // -- initial accumulation
-    if (pos < period) {
-      pos = period;
-    }
-    for (let i = 1; i < period; i++, pos--) {
-      sum = sum + Number(prices[pos]);
-    }
-
     // --- main caculation loop
     const { hstValue, startIndex } = hst;
     if (startIndex > -1) {
@@ -34,6 +26,14 @@ var self = (module.exports = {
         len--;
       }
     } else {
+      // -- initial accumulation
+      if (pos < period) {
+        pos = period;
+      }
+      for (let i = 1; i < period; i++, pos--) {
+        sum = sum + Number(prices[pos]);
+      }
+
       while (len >= 0) {
         if (len > pos) {
           sma[len - 1] = 0;

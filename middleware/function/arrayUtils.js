@@ -1,3 +1,5 @@
+const { isEqual } = require("./setUtils");
+
 module.exports = {
   reverseArray: (array) => {
     return array.slice(0).reverse();
@@ -16,6 +18,20 @@ module.exports = {
   },
 
   getMacd: (values) => {
+    Set.prototype.addObj = function (obj) {
+      var set = new Set(this.valueOf());
+
+      let has = false;
+      set.forEach((s) => {
+        if (isEqual(s, obj)) has = true;
+      });
+
+      if (!has) {
+        set.add(obj);
+      }
+      return set;
+    };
+
     let mkd = new Set();
     let sgn = new Set();
     let ma08 = new Set();
@@ -31,19 +47,49 @@ module.exports = {
     let sd = new Set();
 
     values.forEach((value) => {
-      mkd.add(value.monthly.macd);
-      sgn.add(value.monthly.signal);
-      em21.add(value.monthly.ema21);
-      em34.add(value.monthly.ema34);
-      ma08.add(value.monthly.sma08);
-      ma13.add(value.monthly.sma13);
-      ma21.add(value.monthly.sma21);
-      ntSum08.add(value.monthly.nextSum08);
-      ntSum13.add(value.monthly.nextSum13);
-      ntSum21.add(value.monthly.nextSum21);
-      up.add(value.monthly.upper);
-      low.add(value.monthly.lower);
-      sd.add(value.monthly.stddv);
+      mkd = mkd.addObj({ date: value.monthly.date, value: value.monthly.macd });
+      sgn = sgn.addObj({
+        date: value.monthly.date,
+        value: value.monthly.signal,
+      });
+      em21 = em21.addObj({
+        date: value.monthly.date,
+        value: value.monthly.ema21,
+      });
+      em34 = em34.addObj({
+        date: value.monthly.date,
+        value: value.monthly.ema34,
+      });
+      ma08 = ma08.addObj({
+        date: value.monthly.date,
+        value: value.monthly.sma08,
+      });
+      ma13 = ma13.addObj({
+        date: value.monthly.date,
+        value: value.monthly.sma13,
+      });
+      ma21 = ma21.addObj({
+        date: value.monthly.date,
+        value: value.monthly.sma21,
+      });
+      ntSum08 = ntSum08.addObj({
+        date: value.monthly.date,
+        value: value.monthly.nextSum08,
+      });
+      ntSum13 = ntSum13.addObj({
+        date: value.monthly.date,
+        value: value.monthly.nextSum13,
+      });
+      ntSum21 = ntSum21.addObj({
+        date: value.monthly.date,
+        value: value.monthly.nextSum21,
+      });
+      up = up.addObj({ date: value.monthly.date, value: value.monthly.upper });
+      low = low.addObj({
+        date: value.monthly.date,
+        value: value.monthly.lower,
+      });
+      sd = sd.addObj({ date: value.monthly.date, value: value.monthly.stddv });
     });
     return {
       mkd: Array.from(mkd),

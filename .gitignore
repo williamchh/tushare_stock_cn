@@ -11,6 +11,9 @@
 # production
 /build
 
+# uml
+/uml
+
 # misc
 .DS_Store
 .env.local

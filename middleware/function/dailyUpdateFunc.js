@@ -15,11 +15,13 @@ const {
   combineHourly,
   combineCandleValuesWithIndicators,
   addHourly,
+  updateStockDBWithTushareData,
+  getHstDataArr,
 } = require("./dataProcess");
 const { getNodeText } = require("@testing-library/react");
 
 var self = (module.exports = {
-  combineDbWithHstArr: (stock_db, hstArr) => {
+  combineDbWithHstArr: (stock_db, hstArr, ts) => {
     let c = [];
     stock_db.forEach((stock) => {
       hstArr.forEach((hst) => {
@@ -33,12 +35,17 @@ var self = (module.exports = {
     });
     return c;
   },
-  updateArrStocks: async (stock_ts, stock_db, hstArr) => {
+  updateArrStocks: async (stock_ts, stock_db) => {
     const ts = self.groupByCode(stock_ts);
 
     let res = [];
+    let hstArr = [];
 
-    stock_db = self.combineDbWithHstArr(stock_db, hstArr);
+    stock_db = updateStockDBWithTushareData(stock_db, ts);
+
+    hstArr = hstArr.concat(getHstDataArr(stock_db));
+
+    stock_db = self.combineDbWithHstArr(stock_db, hstArr, ts);
 
     stock_db.forEach((stock) => {
       // find the latest update data
