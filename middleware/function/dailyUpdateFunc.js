@@ -17,6 +17,7 @@ const {
   addHourly,
   updateStockDBWithTushareData,
   getHstDataArr,
+  findLatestUpdateDate,
 } = require("./dataProcess");
 const { getNodeText } = require("@testing-library/react");
 
@@ -49,7 +50,7 @@ var self = (module.exports = {
 
     stock_db.forEach((stock) => {
       // find the latest update data
-      const latestDate = stock.values[0].daily.date;
+      const latestDate = findLatestUpdateDate(stock.values);
 
       // todo iterate ts array
       ts.forEach((tushare) => {
@@ -224,8 +225,8 @@ var self = (module.exports = {
 function findStartIndex(stock, latestDate) {
   let sta = 0;
   while (sta < stock.values.length) {
-    if (stock.values[sta].daily.date !== latestDate) {
-      return sta;
+    if (stock.values[sta].daily.date === latestDate) {
+      return sta + 4;
     }
     sta++;
   }

@@ -2,6 +2,16 @@ const { getWeekNumber, getMonthNumber } = require("./dateUtils");
 const { isEqual } = require("./setUtils");
 
 var self = (module.exports = {
+  findLatestUpdateDate: (values) => {
+    for (const value in values) {
+      if (values.hasOwnProperty(value)) {
+        const element = values[value];
+        if (element.daily.sma08 > 0 || element.hourly.sma08 > 0) {
+          return element.daily.date;
+        }
+      }
+    }
+  },
   getHstDataArr: (stock_db) => {
     let stocks = [];
 
