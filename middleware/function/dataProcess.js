@@ -78,7 +78,7 @@ var self = (module.exports = {
         const element = stock_db[i];
 
         if (s.code === element.code) {
-          s.values.reverse().forEach((v) => {
+          s.values.forEach((v) => {
             //
             // add new values include hourly, daily, weekly, monthly
             //
@@ -419,8 +419,8 @@ var self = (module.exports = {
           smaMonthly21.nextSum[cntMonth]
         );
       }
-      if (isNaN(stock.values[cnt].hourly.nextSum21)) {
-        // console.log(cnt);
+      if (isNaN(stock.values[cnt].daily.sma08)) {
+        console.log(cnt);
       }
 
       cnt++;

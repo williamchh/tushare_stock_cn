@@ -1,5 +1,6 @@
 const { sma, macd, bands } = require("./indicatorsSet");
 const { hasInArray, getMacd } = require("./arrayUtils");
+const { isEqual } = require("./setUtils");
 var self = (module.exports = {
   calculateIndicators: (stocks, startIndex = -1) => {
     let hours = [];
@@ -46,19 +47,38 @@ var self = (module.exports = {
       weekValue = bindWeekMonth(we, weeks);
       monthValue = bindWeekMonth(mt, months);
     } else {
+      Set.prototype.addObj = function (obj) {
+        var set = new Set(this.valueOf());
+
+        let has = false;
+        set.forEach((s) => {
+          if (isEqual(s, obj)) has = true;
+        });
+
+        if (!has) {
+          set.add(obj);
+        }
+        return set;
+      };
       var set = new Set();
       weekValue = stocks[0].week;
       monthValue = stocks[0].month;
       hours = stocks[0].values.map((v) => v.hourly.close);
-      days = stocks[0].hst.days.map((d) => d.value.close);
+      // days = stocks[0].hst.days.map((d) => d.value.close);
       weeks = weekValue.map((d) => d.value);
       months = monthValue.map((d) => d.value);
       we = stocks[0].week.map((d) => d.date);
       mt = stocks[0].month.map((d) => d.date);
       stocks[0].values.forEach((v) => {
-        set.add(v.daily.date);
+        set = set.addObj({
+          dailyDate: v.daily.date,
+          dailyClose: v.daily.close,
+        });
       });
-      dy = Array.from(set);
+      // const {dailyDate, dailyClose }
+      const dailySet = Array.from(set);
+      days = dailySet.map((d) => d.dailyClose);
+      dy = dailySet.map((d) => d.dailyDate);
       //   weekValue = bindWeekMonthWithHst(we, weeks, stocks[0].week);
       //   monthValue = bindWeekMonthWithHst(mt, months, stocks[0].month);
       //   weeks = weekValue.map((v) => v.value);

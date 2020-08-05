@@ -151,7 +151,7 @@ var self = (module.exports = {
     if (ts.length > 0) {
       // stock.values = [];
 
-      ts.reverse();
+      // ts.reverse();
       ts.forEach((item) => {
         const itemWk = getWeekNumber(item[1]);
         const itemMn = getMonthNumber(item[1]);
