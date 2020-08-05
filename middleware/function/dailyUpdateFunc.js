@@ -112,6 +112,10 @@ var self = (module.exports = {
         ts[index].values.push(stock);
       }
     });
+    for (let i = 0; i < ts.length; i++) {
+      const element = ts[i];
+      element.values.reverse();
+    }
     return ts;
   },
 
