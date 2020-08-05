@@ -409,7 +409,7 @@ var self = (module.exports = {
           smaMonthly21.nextSum[cntMonth]
         );
       }
-      if (isNaN(stock.values[cnt].monthly.nextSum21)) {
+      if (isNaN(stock.values[cnt].hourly.nextSum21)) {
         // console.log(cnt);
       }
 
@@ -567,6 +567,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -585,6 +588,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -603,6 +609,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -621,6 +630,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
     } else {
       hr.push({
@@ -639,6 +651,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -657,6 +672,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -675,6 +693,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
 
       hr.push({
@@ -693,6 +714,9 @@ var self = (module.exports = {
         stddv: 0,
         upper: 0,
         lower: 0,
+        nextSum08: 0,
+        nextSum13: 0,
+        nextSum21: 0,
       });
     }
     return hr;
