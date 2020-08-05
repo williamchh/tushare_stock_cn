@@ -74,8 +74,28 @@ var self = (module.exports = {
             //
             if (v[1] > stock_db[i].values[0].daily.date) {
               var hrs = self.addHourly(v);
-              var w = self.getNewWeekObject(v);
-              var m = self.getNewMonthObject(v);
+
+              const itemWk = getWeekNumber(v[1]);
+              const itemMn = getMonthNumber(v[1]);
+              const cpWk = getWeekNumber(stock_db[i].values[0].daily.date);
+              const cpMn = getMonthNumber(stock_db[i].values[0].daily.date);
+              var w = null;
+              var m = null;
+
+              if (itemWk[0] !== cpWk[0] || itemWk[1] !== cpWk[1]) {
+                w = self.getNewWeekObject(v);
+              } else {
+                w = stock_db[i].values[0].weekly;
+                w = self.updateWeekObject(v, w);
+              }
+
+              if (itemMn[0] !== cpMn[0] || itemMn[1] !== cpMn[1]) {
+                m = self.getNewMonthObject(v);
+              } else {
+                m = stock_db[i].values[0].monthly;
+                m = self.updateMonthObject(v, m);
+              }
+
               const { values } = self.combineHourly(hrs, w, m, v);
               values.reverse();
               stock_db[i].values = values.concat(stock_db[i].values);
@@ -390,7 +410,7 @@ var self = (module.exports = {
         );
       }
       if (isNaN(stock.values[cnt].monthly.nextSum21)) {
-        console.log(cnt);
+        // console.log(cnt);
       }
 
       cnt++;
