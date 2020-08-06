@@ -43,7 +43,10 @@ module.exports = {
   },
   groupUpdateStock: async (req, res, next) => {
     const data = req.updateItems.items;
-    var n = 2;
+    if (data.length === 0) {
+      next();
+    }
+    var n = 10;
     var updateArr = groupByNum(data, n);
     let len = updateArr.length;
     // let hstArr = [];
