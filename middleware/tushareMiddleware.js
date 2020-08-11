@@ -1,13 +1,22 @@
 const axios = require("axios");
-const { calculateIndicators } = require("../middleware/function/calculateIndicators")
-const { dateString, getWeekNumber, getMonthNumber, weeksInYear } = require("./function/dateUtils")
-const { getNewWeekObject, 
-        getNewMonthObject, 
-        updateMonthObject, 
-        updateWeekObject, 
-        combineHourly,
-        combineCandleValuesWithIndicators,
-        addHourly} = require("./function/dataProcess")
+const {
+  calculateIndicators,
+} = require("../middleware/function/calculateIndicators");
+const {
+  dateString,
+  getWeekNumber,
+  getMonthNumber,
+  weeksInYear,
+} = require("./function/dateUtils");
+const {
+  getNewWeekObject,
+  getNewMonthObject,
+  updateMonthObject,
+  updateWeekObject,
+  combineHourly,
+  combineCandleValuesWithIndicators,
+  addHourly,
+} = require("./function/dataProcess");
 module.exports = {
   getStockDataAll: async (req, res, next) => {
     // query from headers
@@ -37,7 +46,7 @@ module.exports = {
         postData,
         config
       );
-      
+
       req.stock = {};
       req.stock.latestDate = dateString(stocks.data.data.items[0][1]);
       req.stock.data = stocks.data;
@@ -81,8 +90,8 @@ module.exports = {
         postData,
         config
       );
-
-      req.j = stocks.data;
+      req.stock = {};
+      req.stock.data = stocks.data;
     } catch (error) {
       console.log(error);
       return res.send(error.response);
@@ -101,27 +110,23 @@ module.exports = {
     let cpMn = [0, 0];
 
     if (items.length > 0) {
-
       items.reverse();
 
       items.forEach((item) => {
-
         const itemWk = getWeekNumber(item[1]);
         const itemMn = getMonthNumber(item[1]);
 
         if (itemWk[0] !== cpWk[0] || itemWk[1] !== cpWk[1]) {
           cpWk = itemWk;
           week = getNewWeekObject(item);
-        }
-        else {
+        } else {
           week = updateWeekObject(item, week);
         }
 
         if (itemMn[0] !== cpMn[0] || itemMn[1] !== cpMn[1]) {
           cpMn = itemMn;
           month = getNewMonthObject(item);
-        } 
-        else {
+        } else {
           month = updateMonthObject(item, month);
         }
 
@@ -136,8 +141,6 @@ module.exports = {
           stocks[index].values = stocks[index].values.concat(value.values);
         }
       });
-
-
     }
 
     // TODO reverse stock values in order to get correct indicators
@@ -152,26 +155,25 @@ module.exports = {
 
   getIndicators: (req, res, next) => {
     let stocks = req.stock.values;
-    
+
     stocks[0] = {
       ...stocks[0],
-      hst:{ days: [],weeks: [], months: [] }
-    }
+      hst: { days: [], weeks: [], months: [] },
+    };
 
     let combinedDataSet = calculateIndicators(stocks);
 
-    const { stockValue, weekMonth } = combineCandleValuesWithIndicators(stocks[0], combinedDataSet);
+    const { stockValue, weekMonth } = combineCandleValuesWithIndicators(
+      stocks[0],
+      combinedDataSet
+    );
 
     req.stock.finalStock = stockValue;
     req.stock.weekMonth = weekMonth;
-    
+
     console.log(combinedDataSet.smaHourly08.sma.length);
     // console.log(ema08.length)
 
     next();
   },
 };
-
-
- 
-
