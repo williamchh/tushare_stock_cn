@@ -12,7 +12,7 @@ const {
 } = require("../middleware/tushareMiddleware");
 
 router.get("/group", getStockData, processHourly, (req, res) => {
-  res.json(req.stock.hour);
+  res.json({ herokuTushare: req.stock.hour });
 });
 router.get("/", getStockDataAll, processData, getIndicators, (req, res) => {
   let stocks = req.stock.finalStock;
