@@ -147,9 +147,9 @@ module.exports = {
         });
 
         if (index === -1) {
-          stocks.push({ code: item[0], value: hour });
+          stocks.push({ code: item[0], hours: hour });
         } else {
-          stocks[index].value = stocks[index].value.concat(hour);
+          stocks[index].hours = stocks[index].hours.concat(hour);
         }
         // stocks.unshift(hour);
       });
