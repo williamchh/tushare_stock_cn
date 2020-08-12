@@ -7,6 +7,7 @@ const {
   getWeekNumber,
   getMonthNumber,
   weeksInYear,
+  sinaModelDate,
 } = require("./function/dateUtils");
 const {
   getNewWeekObject,
@@ -97,6 +98,64 @@ module.exports = {
       return res.send(error.response);
     }
 
+    next();
+  },
+
+  processHourly: (req, res, next) => {
+    Array.prototype.elementIndex = function (item, index) {
+      var array = new Array(this.valueOf());
+      let cnt = 0;
+
+      while (cnt < array[0].length) {
+        if (array[0][cnt].code === item[index]) return cnt;
+        cnt++;
+      }
+
+      return -1;
+    };
+    const { items } = req.stock.data.data;
+    const stocks = [];
+
+    if (items.length > 0) {
+      items.reverse();
+
+      items.forEach((item) => {
+        let index = stocks.elementIndex(item, 0);
+        const hour = addHourly(item);
+
+        hour.forEach((value) => {
+          value.day = sinaModelDate(value.date);
+          value.open = value.open.toFixed(3);
+          value.high = value.high.toFixed(3);
+          value.low = value.low.toFixed(3);
+          value.close = value.close.toFixed(3);
+          value.volume = "0";
+          delete value.date;
+          delete value.ema21;
+          delete value.ema34;
+          delete value.sma08;
+          delete value.sma13;
+          delete value.sma21;
+          delete value.macd;
+          delete value.signal;
+          delete value.upper;
+          delete value.lower;
+          delete value.stddv;
+          delete value.nextSum08;
+          delete value.nextSum13;
+          delete value.nextSum21;
+        });
+
+        if (index === -1) {
+          stocks.push({ code: item[0], value: hour });
+        } else {
+          stocks[index].value = stocks[index].value.concat(hour);
+        }
+        // stocks.unshift(hour);
+      });
+    }
+
+    req.stock.hour = stocks;
     next();
   },
 
